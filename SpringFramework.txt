@@ -1,0 +1,184 @@
+===============SPRING FRAMEWORK================
+
+key differences between constructor injection and setter injection
+-------------------------------------------------------------------
+Partial dependency --- can be injected using setter injection but it is not possible by constructor. Suppose there are 3 properties in a class, having 3 arg constructor and setters methods. In such case, if you want to pass information for only one property, it is possible by setter method only.
+Overriding --- Setter injection overrides the constructor injection. If we use both constructor and setter injection, IOC container will use the setter injection.
+New Instances --- We can easily change the value by setter injection. It doesn't create a new bean instance always like constructor. So setter injection is flexible than constructor injection.
+
+
+POM --> Project Object Model
+POJO --> Plain Old Java Object
+
+
+bean scopes
+-------------
+1) Singleton ---> (default)spring container creates only one instance of bean(shared among all beans of same type) 
+2) Prototype ---> creates a new instance of bean for each container request
+remining scopes are :  request, session, global-session
+
+
+bean configuration(3 ways)
+--------------------------
+1. XML configuration  ---> ClassPathXmlApplicationContext
+2. Anotation configuration --> @Component for which we want the bean & write component-scan in xml or in java config class
+3. Java configuration --> @Configuration, @Bean --> AnnotationConfigApplicationContext
+
+
+xml config
+-----------
+IOC
+<bean id=" " class=" " scope=" "></bean>
+
+DI
+<bean id=" " class=" " scope="sigleton/prototype" autowired="byName/byType etc">	//in case of autowired, no need to mention setter/costructor inj.
+	<property name=" " value=" " (or) ref=" " />	//setter injection
+	<contructor-arg value=" " type=" "(or) ref=" " />  //contructor injection
+</bean>
+
+
+annotation config
+------------------
+IOC
+@component
+<component-scan> in xml file or java config class
+
+DI
+@component
+<component-scan> in xml file or java config
+@Autowired	//to inject dependency of another class (to use autowired, bean has to created for that obj in xml or java config or mention @component for that class)
+@Primary or @Qualifier(" ") 	//to remove ambiguity if there r multiple implimentations for interface --> ClassPathXmlApplicationContext
+
+
+java config
+------------
+IOC
+@configuration //config class is created
+@bean (no need to create @component for the classes to which bean in created in config class)
+
+DI
+@Configuration
+@ComponentScan(base-packages=" ")
+@Bean
+@Autowired	//used to inject the object dependency implicitly. It internally uses setter or constructor injection. Autowiring can't be used to inject primitive and string values. It works with reference only.
+@Qualifier(" ")
+
+
+
+
+
+
+===============SPRING BOOT================
+
+FLOW
+-----
+Client--->Controller<--->Service lyr<--->Dao lyr<--->DB
+  |		|
+  <--Jsp pages<--
+
+
+application.properties
+----------------------
+server.pot=8585
+coach.name=Fayaz
+team.name=MI
+management.endpoints.web.exposure.include=* //expose all acutator endpoints over HTTP
+
+
+Query parameters are appended to the end of the request URL, following ? and listed in key value pairs, separated by &
+	•  syntax:  ?id=1&type=new
+Path parameters form part of the request URL, and are referenced using placeholders preceded by : 
+	•  syntax:  /customer/:id
+
+
+RestController
+--------------
+@Value("${coach.name}")
+private String Coach;
+
+@Value("${team.name}")
+private String Team;
+
+
+Dependencies
+------------
+spring-boot-starter-web //contains spring-web,web-mvc,rest,hibernate,tomcat etc
+spring-boot-devtools //used to automatically reload our appllication whenever code is updates
+spring-boot-starter-acutator //used to monitor & manage our application, check app's health,access metrics(By deafult, /health & /info are available prefixed by /acutator )
+
+Spring data rest ---->no need of controller and services //search for more info  
+
+
+Annotations
+-------------
+@PathVariable(use if we sending Id of emp)	//takes variable from url path & assign to a variable 
+@RequestBody(use if we sending JSON data of emp)	//takes Json data(not ID) from client and assigns it to respective Object 
+	//in Postman ---> Body/raw/JSON(application/json)
+
+
+JPA(Java Persistence API)
+-------------------------
+Standard API for ORM
+NO VENDOR LOCK-IN 
+
+In springBoot, Hibernate is the default impl of JPA
+SpringBoot automatically creates datasource and Entitymanager
+---> Entity Manager is from JPA.Its is similar to Session factory
+
+@Transactional is not needed in Spring Data JPA, it provides it by default
+
+
+Data binding
+-------------
+It is the process of converting JSON data to and from java POJO's
+
+@JsonIgnoreProperties(ignoreUnknown = true)  //to ignore additional changes in json that pojo class unware to avoid exceptions
+
+
+Jackson
+--------
+jackson handles the data binding b/w JSON and Java POJO's internally in Spring Boot. In others we have to add Jackson-databind dependency
+
+Rest over Http methods(CRUD operations)
+--------------------------
+POST ---- CREATE
+GET ---- READ
+PUT ---- UPDATE
+DELETE --- DELETE
+
+
+
+
+
+
+===============SPRING MVC================
+
+web.xml
+{servlet name}-servlet.xml
+
+
+methodname(HttpServletRequest req, )
+-----------------------------------
+String str=req.getParameter("");
+int i= Integer.ParseInt(req.getParameter("name of var in jsp feilds"));
+-or-
+methodname(@RequestParam("name of var in jsp feilds") String str ) //reads parametrs from form data and bind it to str variable 
+
+
+methodname(, Model theModel)  // used to pass data btw controller to views
+----------------------------
+theModel.addAttribute("attribute name", attribute value);
+-or-
+methodname(@ModelAtrribute("name of modelAtrribute in jsp form") Student thestudent) //it binds form data to obj
+										     //it fetches all feilds of an obj
+
+
+@PathVariable	//takes id from uri and assigns to a variable
+@PostConstruct //to load student(class obj) data only once
+
+@ExceptionHandler
+@ControllerAdvice (AOP) //for global exception handler
+
+@RequestBody //binds pojo to a method parameter....to pass obj as i/p data
+
+

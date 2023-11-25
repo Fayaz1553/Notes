@@ -1,0 +1,121 @@
+##Git is a free and open source distributed version control system.
+ It is developed to manage projects with high speed and efficiency. The version control system allows us to monitor and work together with our team members at the same workspace.
+
+A version control application allows us to keep track of all the changes that we make in the files of our project
+
+in GIT, The HEAD points out the last commit in the current checkout branch. It is like a pointer to any reference. The HEAD can be understood as the "current branch".
+
+git --version
+clear
+
+git config --list	//shows all details of user
+git config --global
+git config --global -e  //to edit
+
+ex:
+---
+git config --global user.name “fayaz.shaik”
+git config --global user.email fayaz.shaik@vodafone.com
+git config --global https.proxy 192.168.101.52:8080
+git config --global http.proxy 192.168.101.52:8080
+git config --global --unset https.proxy
+git config --global --unset http.proxy
+
+
+git config --global alias.<alias name> "command name to be aliased"  //aliasing any command temporary
+---> Ex: git config --global alias.allcommits "log --oneline --graph --all"
+
+alias np=notepad //aliasing editor temporary aliasses
+
+git config --global core.editor "location url of notepad++ in C"  //to set thirdparty app as default editor
+git config core.editor  //to see which editor is there by default
+-------------------------------------------------------------------------------------
+
+git help <keyword  (or)  git <keyword> --help
+
+<name of that app>	// to use any third party app, if not configured add path in system variables
+
+git remote //to know the name of remote repo
+
+git remote add origin <destination git url> //to link to remote server ie, github
+git remote set-url origin <destination git url> //if already added then use set-url to add new git URL
+
+
+git workflow
+-------------
+working directory --add--> staging area ---commit--> local rep(.git) --push--> remote repo(git hub, bitbucket etc)
+
+
+cmd:
+----
+git clone <repo-url> <preferred name if u want> //to copy original project from github
+git clone -b <branch name> <branch url>	//it clones specific branch in given branch
+
+git fetch origin  //to fetches the changes in remote to local origin/master then we merge it with master branch to see new files added in remote repo
+git pull origin master  // it fetches and merges in master branch automatically
+
+git init  //initialize the git folder(.git is ceated)
+git status //to view all the files(changes) which are not staged.
+git add <updated file name>  //to stage the changes, if u want all files then add .(period) after the add
+git commit -m "message to commit"  //to save in local repo
+git push -u origin <branch name>  //to push into remote repo or git Hub
+
+---> create .gitignore file and mention the file names or patters(ex: *.txt) in it those u dont want to push into repo
+
+git diff  //same as status but shows actual difference in content ,it has to be in stagged stage
+
+git log  // gives history of commits in project
+git log --pretty=oneline or full or fuller  //based on our req
+git log --oneline --graph --all  // graph used to show branches as tree  &all is used to see logs of all branches
+
+git branch < new branch name>   //creating a branch
+git branch -a //to see all branches
+git checkout <branch name>  //to shift to mentioned branch
+git checkout -b <new branch name>  //creates a new branch and automatically switches to that branch
+git branch -m <old name> <new name>	//to rename old branch with new name
+git branch -d <branch name> //to delete a branch
+
+git merge <banch name>  //merges given branch name with present branch(the branch we present), gives graphical view in log
+git rebase <branch name>  //merges but didnt give graphical view in log
+
+
+########### p4merge tool is used to see diff and merge procees in easy & simple way ###################
+
+git stash //deletes content  that's in staged stage & sent to dustbin(backup).we can take it back if we needed.
+git stash list //to see stashed list
+git stash apply //it takes back the latest stash in the stack flow
+git stash apply stash@{id of stash}  //to get a particular stash ex.stash@{2}
+git stash pop //takes back latest stash from stack & drops that from stack automatically
+git stash drop // deletes latest stash in stack 
+
+git cherry-pick <commit-id of another branch>  // for applying same commit from one branch into another branch(give another branch commit ID in required branch)
+
+git clean -f -d -x //permanently deletes untracked files only( -f means forcely, -d means directory, -x means .gitignore)
+
+git tag <tag name>  //to mark or tag a commit
+git tag -a <tag name>  //-a for animated tag
+git tag  //lists all tags
+git tag -d <tagname> // to delete a tag
+
+git restore <filename>  //to undo changes made in working directory stage (Before add)
+----or----
+git checkout -- <filename> // same as restore, but for undoing multiple file use dot(. // space should be there btw -- and filename
+
+git reset <file name>  //to undo after add
+
+git reset <commit id> //undos commit (use commit id that u want to go back to)
+
+
+
+Generating a new SSH key
+-------------------------
+ls -al ~/.ssh	//to see all the avialable shh keys in our PC
+
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"	//to generate ssh keys
+
+eval "$(ssh-agent -s)"	//to runssh-agent
+
+ssh-add -K ~/.ssh/id_rsa	//to add ur private key to ssh-agent
+
+clip < ~/.ssh/id_rsa.pub	//or add shh public key in guthub>settings>ssh & gpg keys>save by copying from .ssh folder
+

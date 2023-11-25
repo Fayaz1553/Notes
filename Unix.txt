@@ -1,0 +1,76 @@
+UNIX/LINUX		touch,find,ping,curl -0,ssh, ps ax, top,kil <pid>, |(append or pipe)
+----------
+
+man <command> ---> gives manual page... information about commads
+info <command> ---> gives detailed info abt a command
+whatis <command> --->gives purpose of cmd
+who ---> lists the name of all users curently logged in.
+who am i --->displays user name
+hostname --->displays host name(hostname -i --->displays ip address of hostname)
+pwd ---> shows present working directory
+date ---> current date
+cal ---> print current month cal (cal <year> - give full year calender)
+clear ----> clears sceen
+
+mkdir [dirName]----> Ceate a new directory
+mkdir -p welcome/new/images ----> creates intermediate directories i.e; directories within dir's
+mkdir 'my computer' ---> to create a dir that contains ---spaces---.
+rmdir [dirName]---> to remove empty dir
+
+cd [dir name] ---> to move inside that directory
+cd .. ---> to go back to previous directory(parent dir)
+cd ../../.. ---->to tell how many times to go back(Here; 3 times)
+cd ---> go's to home directory($)
+
+
+cat filename.txt  -----> to see data inside file
+cat > filename.txt ----> to create file and can directly enter data in a file(to exit press---> CRTL+C)
+touch <filename> ---> to create a file (with this we can create empty files & hidden files only)	//touch ex.txt & touch .dir1
+less filename.txt ----> to see data in file only(to quit press--> q)
+vi filename.txt ----> to see and modify data in it(to modify data press INSERT...to quit press Esc-->type :wq! to save)
+head <filename>---> optputs the first 10 line of a file
+
+rm [filename]---> to remove/del a file
+rm -rf <folder to delete>
+rm -r [dir name]---> danger cmd i.e; it deletes all files & subDir within a dir and dir itself.
+
+cp [soucefile] [newfile/dir] ---> copies data from source to newfile/ dir
+mv [old file] [new file/directory]---> to rename files /move files to another file or directory
+
+grep ----> to search for patterns in a existing file(Global search Regular Expression and Printed)
+grep 'fayaz' filename ---> search fayaz keyword in given file name
+grep -c ---> counts the matched keyword in file
+grep -i ---> ignores caseSensitive of upper & lower cases while searching.
+grep -v ----> to print lines that do not contain or match the expression.(ignores given pattern)
+
+history -c  ---> to clear entire history
+
+
+chmod---> to change access/permissions of one or more files(only super user should change)
+chmod <permissions> filename	//chmod 641 home
+
+logout or exit ---> to quit from unix
+
+df ---> tells how much disk is used and how much is free
+ulimit 10000---> tells that the max file size(10000 bytes) that a user can create.
+
+bc ---> u are in calculator mode(to exit type --> quit)
+factor ---> u r in prime factor mode.. It displays prime factors of a num(to quit press---> CTRL+C)
+
+
+nslookup oss-ext1-solstice.vfde.corp.amdocs.aws  //for ip of dns
+
+scp <file/folder name> root@<master-IP of target env>:<location in target env>	// to copy files/certs from one machine to another
+	Ex: scp VFGS-ASOM.cer root@10.246.34.12:root/keys/kubernetes
+
+
+FILE SYSTEMS
+-------------
+ROOT--->file systm is organisedd as a tree with single root node ROOT(.root dir is denoted as /)
+DEV --->contains files that control various ip/out devices like terminals, printers,disks etc
+BIN --->it contains executable files for most of the unix commands
+TEM --->contains temporary files created by unix or user
+USR --->contains several dir's each associated with particular user(there is anothe BIN in USR that contains additional cmds)
+ETC --->contains binary executable files req for system administration
+LIB --->it contains all the library functions provided by unix users
+UNIX--->has some predefined directories

@@ -1,0 +1,58 @@
+
+HIBERNATE vs JDBC
+-------------------
+1) A.Hibernate is database independent and same code can work for many databases with minor changes.
+   B.JDBC is database dependent i.e. one needs to write different codes for different database.
+2) A.For Hibenate no need to have SQL knowledge
+   B.For JDBC we need to have SQL knowledge
+
+
+* Dialect --> converts HQL queries to specific DB queries
+
+
+Hibernate  (hibernate.cfg.xml---->config file)
+----------
+@Entity
+@Table(name="name of table in DB ")
+
+@Id //primary key
+@Column(name="name of column in DB")
+
+
+DAO----> Session Factory---->Data souce---->DB	(Normally we have to do all these config's but SpringBoot automatically do's that for us)	
+					(based on added dependencies & conditions in application.properties)
+
+
+SessionFactory ---> reads hibernate config file, creates session objects, creates only once in the app
+Session ---> wraps a jdbc connection, used to save/retrive objects
+
+IMPL
+----
+SessionFactory factory= new Configuation().configure("hibernate config file name i.e; hibernate.cfg.xml").addAnnotatedClass(enter entity class name).buildSessionFactory();
+Session session = factory.getCurrentSession();
+//.....obj, DB data
+session.beginTransaction();
+//.....code....
+session.getTransaction().commit();
+
+
+Advanced mappings
+-------------------
+@OneToOne - eager
+@OneToMany - lazy
+@ManyToOne - eager
+@ManyToMany - lazy
+
+
+Eager vs Lazy loadings
+----------------------
+Eager -- retreive everything
+Lazy(preffered) -- retreive on request/demand basis
+
+
+@Sevice //Service impl
+@Repository //DAO impl
+@Transactional //instead of beginTransaction(); getTransaction().commit();
+	       //use it in servive lyr, if theres no service lyr, impl it in dao lyr
+
+

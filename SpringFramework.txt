@@ -1,5 +1,42 @@
 ===============SPRING FRAMEWORK================
 
+Spring IoC (Inversion of Control) Container is the core of Spring Framework. It creates the objects, configures and assembles their dependencies, manages their entire life cycle. It gets the information about the objects from a configuration file(XML) or Java Code or Java Annotations and Java POJO class. These objects are called Beans. Since the Controlling of Java objects and their lifecycle is not done by the developers, hence the name Inversion Of Control.
+There are 2 types of IoC containers:
+ - BeanFactory 
+ - ApplicationContext 
+
+That means if you want to use an IoC container in spring whether we need to use a BeanFactory or ApplicationContext. The BeanFactory is the most basic version of IoC containers, and the ApplicationContext extends the features of BeanFactory. 
+
+The followings are some of the main features of Spring IoC,
+Creating Object for us,
+Managing our objects,
+Helping our application to be configurable,
+Managing dependencies
+
+
+Dependency Injection is the main functionality provided by Spring IOC(Inversion of Control). The Spring-Core module is responsible for injecting dependencies through either Constructor or Setter methods. The design principle of Inversion of Control emphasizes keeping the Java classes independent of each other and the container frees them from object creation and maintenance. 
+
+Need for Dependency Injection:
+Suppose class One needs the object of class Two to instantiate or operate a method, then class One is said to be dependent on class Two. Now though it might appear okay to depend a module on the other but, in the real world, this could lead to a lot of problems, including system failure. Hence such dependencies need to be avoided.
+
+Spring IOC resolves such dependencies with Dependency Injection, which makes the code easier to test and reuse. Loose coupling between classes can be possible by defining interfaces for common functionality and the injector will instantiate the objects of required implementation. The task of instantiating objects is done by the container according to the configurations specified by the developer.
+
+Types of Spring Dependency Injection:
+There are two types of Spring Dependency Injection. They are:
+1) Setter Dependency Injection (SDI): This is the simpler of the two DI methods. In this, the DI will be injected with the help of setter and/or getter methods. Now to set the DI as SDI in the bean, it is done through the bean-configuration file For this, the property to be set with the SDI is declared under the <property> tag in the bean-config file.
+    <bean id="GFG" class="com.geeksforgeeks.org.GFG"> 
+        <property name="geek"> 
+            <ref bean="CsvGFG" /> 
+        </property> 
+    </bean> 
+
+2) Constructor Dependency Injection (CDI): In this, the DI will be injected with the help of contructors. Now to set the DI as CDI in bean, it is done through the bean-configuration file For this, the property to be set with the CDI is declared under the <constructor-arg> tag in the bean-config file.
+    <bean id="GFG" class="com.geeksforgeeks.org.GFG"> 
+        <constructor-arg> 
+            <bean class="com.geeksforgeeks.org.impl.CsvGFG" /> 
+        </constructor-arg> 
+    </bean> 
+
 key differences between constructor injection and setter injection
 -------------------------------------------------------------------
 Partial dependency --- can be injected using setter injection but it is not possible by constructor. Suppose there are 3 properties in a class, having 3 arg constructor and setters methods. In such case, if you want to pass information for only one property, it is possible by setter method only.

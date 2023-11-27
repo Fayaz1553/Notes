@@ -3,7 +3,9 @@
 Spring IoC (Inversion of Control) Container is the core of Spring Framework. It creates the objects, configures and assembles their dependencies, manages their entire life cycle. It gets the information about the objects from a configuration file(XML) or Java Code or Java Annotations and Java POJO class. These objects are called Beans. Since the Controlling of Java objects and their lifecycle is not done by the developers, hence the name Inversion Of Control.
 There are 2 types of IoC containers:
  - BeanFactory 
+	BeanFactory factory = new ClassPathXmlApplicationContext("bean-factory-demo.xml");
  - ApplicationContext 
+	ApplicationContext context = new ClassPathXmlApplicationContext("bean-factory-demo.xml");
 
 That means if you want to use an IoC container in spring whether we need to use a BeanFactory or ApplicationContext. The BeanFactory is the most basic version of IoC containers, and the ApplicationContext extends the features of BeanFactory. 
 
@@ -21,7 +23,6 @@ Suppose class One needs the object of class Two to instantiate or operate a meth
 
 Spring IOC resolves such dependencies with Dependency Injection, which makes the code easier to test and reuse. Loose coupling between classes can be possible by defining interfaces for common functionality and the injector will instantiate the objects of required implementation. The task of instantiating objects is done by the container according to the configurations specified by the developer.
 
-Types of Spring Dependency Injection:
 There are two types of Spring Dependency Injection. They are:
 1) Setter Dependency Injection (SDI): This is the simpler of the two DI methods. In this, the DI will be injected with the help of setter and/or getter methods. Now to set the DI as SDI in the bean, it is done through the bean-configuration file For this, the property to be set with the SDI is declared under the <property> tag in the bean-config file.
     <bean id="GFG" class="com.geeksforgeeks.org.GFG"> 
@@ -29,13 +30,53 @@ There are two types of Spring Dependency Injection. They are:
             <ref bean="CsvGFG" /> 
         </property> 
     </bean> 
+---or---
+<bean id="beanId" class="BeanClass"> 
+  <property name="secondBean" ref="SecondBean"/> 
+  <property name="message" value="This is message."/> 
+</bean>
+---or---
+<bean id="beanId" class="BeanClass"> 
+        <property name="name" value="geeks" /> 
+        <property name="name2"> 
+            <map> 
+                <entry key="key1" value="value1"/> 	//for Maps
+                <entry key ="key2" value-ref="DataSource"/> 
+            </map> 
+        </property> 
+</bean>
+---or---
+<bean id="company" class="com.geeksforgeeks.org.Company">  
+        <property name="companyName" value="GeeksForGeeks"></property>  
+        <property name="employees">
+            <list>
+                 <value>"John"</value>		//for collections
+                <value>"Max"</value>
+                <value>"Sam"</value>
+             </list>
+         </property>
+    </bean>  
 
 2) Constructor Dependency Injection (CDI): In this, the DI will be injected with the help of contructors. Now to set the DI as CDI in bean, it is done through the bean-configuration file For this, the property to be set with the CDI is declared under the <constructor-arg> tag in the bean-config file.
-    <bean id="GFG" class="com.geeksforgeeks.org.GFG"> 
-        <constructor-arg> 
-            <bean class="com.geeksforgeeks.org.impl.CsvGFG" /> 
-        </constructor-arg> 
-    </bean> 
+<bean id="beanId" class="BeanClass"> 
+  <constructor-arg type="String" value="test"/> 
+  <constructor-arg type="int" value="1002"/> 
+</bean>
+---or---
+<bean id="anyUniqueId" class="Student">
+    <constructor-arg name="id" value="101"/>
+    <constructor-arg name="mathCheat">
+       <bean class="MathCheat"></bean>
+    </constructor-arg>
+</bean>
+---or----
+<bean id="mathCheatObjectValue" class="MathCheat"></bean>
+
+<bean id="student" class="Student">
+    <constructor-arg name="id" value="101"/>
+    <constructor-arg name="mathCheat" ref="mathCheatObjectValue"/>
+</bean>
+
 
 key differences between constructor injection and setter injection
 -------------------------------------------------------------------
@@ -47,12 +88,19 @@ New Instances --- We can easily change the value by setter injection. It doesn't
 POM --> Project Object Model
 POJO --> Plain Old Java Object
 
-
-bean scopes
+bean scopes - refers to the lifecycle of Bean
 -------------
-1) Singleton ---> (default)spring container creates only one instance of bean(shared among all beans of same type) 
-2) Prototype ---> creates a new instance of bean for each container request
-remining scopes are :  request, session, global-session
+1) Singleton ---> (default)spring container creates only one instance of bean definition per Spring IoC container(shared among all beans of same type) 
+	<beans>
+  	   < bean id = "hw" class= "bean.HelloWorld" scope = "singleton" / >
+	</beans>
+2) Prototype ---> A new instance will be created for a single bean definition every time a request is made for that bean.
+	<beans>
+  	   < bean id = "hw" class= "bean.HelloWorld" scope = "prototype" / >
+	</beans>
+3) request ---> A new instance will be created for a single bean definition every time an HTTP request is made for that bean. But Only valid in the context of a web-aware Spring ApplicationContext.
+4) session ---> Scopes a single bean definition to the lifecycle of an HTTP Session. But Only valid in the context of a web-aware Spring ApplicationContext.
+5) global-session --> Scopes a single bean definition to the lifecycle of a global HTTP Session. It is also only valid in the context of a web-aware Spring ApplicationContext.
 
 
 bean configuration(3 ways)
@@ -70,7 +118,7 @@ IOC
 DI
 <bean id=" " class=" " scope="sigleton/prototype" autowired="byName/byType etc">	//in case of autowired, no need to mention setter/costructor inj.
 	<property name=" " value=" " (or) ref=" " />	//setter injection
-	<contructor-arg value=" " type=" "(or) ref=" " />  //contructor injection
+	<contructor-arg name=" " value=" " type=" "(or) ref=" " />  //contructor injection
 </bean>
 
 
@@ -101,7 +149,13 @@ DI
 @Qualifier(" ")
 
 
-
+Autowire:
+---------
+- No -> tells the framework that autowiring is not supposed to be done. It is the default mode used by Spring
+- byName -> It uses the name of the bean for injecting dependencies
+- byType -> It injects the dependency according to the type of the bean. It looks up in the configuration file for the class type of the property. If it finds a bean that matches, it injects the property. If not, the program throws an error.
+- constructor -> It injects the required dependencies by invoking the constructor. It works similar to the “byType” mode but it looks for the class type of the constructor arguments. If none or more than one bean are detected, then it throws an error
+- autoDetect -> uses two other modes for autowiring – constructor and byType. It first tries to autowire via the constructor mode and if it fails, it uses the byType mode for autowiring.
 
 
 
@@ -113,28 +167,33 @@ Client--->Controller<--->Service lyr<--->Dao lyr<--->DB
   |		|
   <--Jsp pages<--
 
+The default port of the Tomcat server is 8080 and can be changed in the application.properties file.
 
 application.properties
 ----------------------
 server.pot=8585
 coach.name=Fayaz
 team.name=MI
-management.endpoints.web.exposure.include=* //expose all acutator endpoints over HTTP
+management.endpoints.web.exposure.include=* 	//expose all acutator endpoints over HTTP
+
+-----inside RestController----
+@Value("${coach.name}")
+private String Coach;
+
+@Value("${team.name}")
+private String Team;
+---also as below ---
+@Value("Anshul")
+    public void setName(String name)    // Setter
+    {
+        this.name = name;
+    }
 
 
 Query parameters are appended to the end of the request URL, following ? and listed in key value pairs, separated by &
 	•  syntax:  ?id=1&type=new
 Path parameters form part of the request URL, and are referenced using placeholders preceded by : 
 	•  syntax:  /customer/:id
-
-
-RestController
---------------
-@Value("${coach.name}")
-private String Coach;
-
-@Value("${team.name}")
-private String Team;
 
 
 Dependencies
@@ -148,10 +207,26 @@ Spring data rest ---->no need of controller and services //search for more info
 
 Annotations
 -------------
-@PathVariable(use if we sending Id of emp)	//takes variable from url path & assign to a variable 
-@RequestBody(use if we sending JSON data of emp)	//takes Json data(not ID) from client and assigns it to respective Object 
-	//in Postman ---> Body/raw/JSON(application/json)
-
+@PathVariable() -> it takes variable from url path & assign to a variable 
+@RequestBody() -> takes Json data(not ID) from client and assigns it to respective Object 
+@Autowired -> It injects object dependency implicitly. We use @Autowired to mark the dependency that will be injected by the Spring container. It is applied to the fields, setter methods, and constructors.
+@SpringBootApplication -> It is used to mark the main class of a Spring Boot application. It encapsulates @Configuration, @EnableAutoConfiguration, and @ComponentScan annotations with their default attributes.
+@EnableAutoConfiguration
+@Controller -> it indicates that they’re front controllers and responsible to handle user requests and return the appropriate response. It is typically used in combination with annotated handler methods based on the @RequestMapping annotation. It can be applied to classes only. It’s used to mark a class as a web request handler
+@Service -> to indicate that they’re holding the business logic(service layer).
+@Repository -> to indicate that they’re dealing with CRUD operations, usually, it’s used with DAO (Data Access Object) or Repository implementations that deal with database tables.
+@Configuration -> indicates that the class has @Bean definition methods. So Spring container can process the class and generate Spring Beans to be used in the application.
+@Bean -> is applied on a method to specify that it returns a bean to be managed by Spring context. Spring Bean annotation is usually declared in Configuration classes methods. Whenever you are using the @Bean annotation to create the bean you don’t need to use the @ComponentScan annotation inside your configuration class.
+@ComponentScan -> is used along with the @Configuration annotation to specify the packages that we want to be scanned, becoz we dont want to use beans.xml. if we use @ComponentScan without arguments tells Spring to scan the current package and all of its sub-packages.
+@Component -> it is a class-level annotation. It is used to denote a class as a Component(bean). We can use @Component across the application to mark the beans as Spring’s managed components
+@Qualifier-> is used to resolve the autowiring conflict when there are multiple beans of the same type. The @Qualifier annotation can be used on any class annotated with @Component or on methods annotated with @Bean.
+@Primary -> it indicates that a particular bean should be given preference when multiple beans are candidates to be autowired to a single-valued dependency.  
+@Value -> is used to assign default values to variables and method arguments. We can read spring environment variables as well as system variables using this annotation.
+@Id -> marks a field in a model class as the primary key
+@PostConstruct -> it gets executed after the spring bean is initialized. We can have only one method annotated with this  annotation.
+@PreDestroy -> it gets called when the bean instance is getting removed from the context. Remember that if your spring bean scope is “prototype” then it’s not completely managed by the spring container and the PreDestroy method won’t get called.
+@Scope -> to set bean scope
+@Required -> is a method-level annotation used in the setter method of a bean property and therefore making the setter-injection compulsory. This annotation suggests that the required bean property must be injected with a value at the configuration time & shouldn't be null.
 
 JPA(Java Persistence API)
 -------------------------
@@ -189,9 +264,61 @@ DELETE --- DELETE
 
 
 ===============SPRING MVC================
+DispatcherServlet acts as the Front Controller for Spring-based web applications.Any request is going to come into our website the front controller is going to stand in front and is going to accept all the requests and once the front controller accepts that request then this is the job of the front controller that it will make a decision that who is the right controller to handle that request.
 
-web.xml
+In Spring, the /WEB-INF/web.xml file is the Web Application Deployment Descriptor of the application. This file is an XML document that defines everything about your application that a server needs to know (except the context path, which is assigned by the Application Deployer and Administrator when the application is deployed), servlets, and other components like filters or listeners, initialization parameters, container-managed security constraints, resources, welcome pages, etc. 
+WEB-INF/web.xml
 {servlet name}-servlet.xml
+
+<servlet>
+    <servlet-name>myDispatcherServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+</servlet>
+ 
+<servlet-mapping>
+    <!-- Provide a Servlet Name that you want to map -->
+    <servlet-name>myDispatcherServlet</servlet-name>
+    <!-- Provide a url pattern -->
+    <url-pattern>/gfg.com/*</url-pattern>
+</servlet-mapping>
+
+So this does mean that the servlet “myDispatcherServlet” is going to handle all the requests starting from gfg.com/anything, that may be gfg.com/save or gfg.com/get, anything. But it must start with gfg.com.
+
+---or---
+//class needs to implement WebApplicationInitializer
+AnnotationConfigWebApplicationContext webApplicationContext  = new AnnotationConfigWebApplicationContext();
+ 
+        // Registering the spring config class
+        webApplicationContext.register(CalculatorAppConfig.class);
+ 
+        // Creating a dispatcher servlet object
+        DispatcherServlet dispatcherServlet = new DispatcherServlet(webApplicationContext);
+
+---or---
+//class needs to extend AbstractAnnotationConfigDispatcherServletInitializer, it has below methods.
+public class CalculatorAppInitializer
+    extends AbstractAnnotationConfigDispatcherServletInitializer {
+ 
+    @Override protected Class<?>[] getRootConfigClasses()
+    {
+        return null;
+    }
+
+//need to overrride this, to register the spring config class
+    @Override protected Class<?>[] getServletConfigClasses()
+    {
+	Class aClass[] = { CalculatorAppConfig.class };
+        return aClass;
+    }
+
+//need to overrride this, mapping for the dispatcher servlet
+    @Override protected String[] getServletMappings()
+    {
+	String arr[] = { "/gfg.com/*" };
+        return arr;
+    }
+}
 
 
 methodname(HttpServletRequest req, )

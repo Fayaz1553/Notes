@@ -206,18 +206,20 @@ Spring data rest ---->no need of controller and services //search for more info
 
 
 Annotations
--------------
-@PathVariable() -> it takes variable from url path & assign to a variable 
-@RequestBody() -> takes Json data(not ID) from client and assigns it to respective Object 
+------------
+@PathVariable(String id) -> it takes variable from url path & assign to a variable 
+@RequestBody(LoginForm logForm) -> takes Json data/HttpRequest body from client and assigns it to respective Object by deserialization.
+@ResponseBody() -> tells a controller that the object returned is automatically serialized into JSON and passed back into the HttpResponse object.
+@RestController -> is used for making restful web services. It is combination of the @controller and @ResponseBody. This annotation is used at the class level and allows the class to handle the requests made by the client.
 @Autowired -> It injects object dependency implicitly. We use @Autowired to mark the dependency that will be injected by the Spring container. It is applied to the fields, setter methods, and constructors.
-@SpringBootApplication -> It is used to mark the main class of a Spring Boot application. It encapsulates @Configuration, @EnableAutoConfiguration, and @ComponentScan annotations with their default attributes.
-@EnableAutoConfiguration
+@SpringBootApplication -> It is used to mark the main class of a Spring Boot application. It is the combination of  @Configuration, @EnableAutoConfiguration and @ComponentScan annotations.
+@EnableAutoConfiguration -> is used to enable the auto-configuration feature. It automatically registers the beans with @Component, @Configuration, @Bean, and meta-annotations for building custom stereotype annotations, etc.
 @Controller -> it indicates that they’re front controllers and responsible to handle user requests and return the appropriate response. It is typically used in combination with annotated handler methods based on the @RequestMapping annotation. It can be applied to classes only. It’s used to mark a class as a web request handler
 @Service -> to indicate that they’re holding the business logic(service layer).
 @Repository -> to indicate that they’re dealing with CRUD operations, usually, it’s used with DAO (Data Access Object) or Repository implementations that deal with database tables.
 @Configuration -> indicates that the class has @Bean definition methods. So Spring container can process the class and generate Spring Beans to be used in the application.
 @Bean -> is applied on a method to specify that it returns a bean to be managed by Spring context. Spring Bean annotation is usually declared in Configuration classes methods. Whenever you are using the @Bean annotation to create the bean you don’t need to use the @ComponentScan annotation inside your configuration class.
-@ComponentScan -> is used along with the @Configuration annotation to specify the packages that we want to be scanned, becoz we dont want to use beans.xml. if we use @ComponentScan without arguments tells Spring to scan the current package and all of its sub-packages.
+@ComponentScan -> is used along with the @Configuration annotation to specify the packages that we want to be scanned, becoz we dont want to use beans.xml. Spring can also start scanning from the specified package, which we can define using basePackageClasses() or basePackages(). If no package is specified, then it considers the package of the class declaring the @ComponentScan annotation.
 @Component -> it is a class-level annotation. It is used to denote a class as a Component(bean). We can use @Component across the application to mark the beans as Spring’s managed components
 @Qualifier-> is used to resolve the autowiring conflict when there are multiple beans of the same type. The @Qualifier annotation can be used on any class annotated with @Component or on methods annotated with @Bean.
 @Primary -> it indicates that a particular bean should be given preference when multiple beans are candidates to be autowired to a single-valued dependency.  
@@ -227,6 +229,9 @@ Annotations
 @PreDestroy -> it gets called when the bean instance is getting removed from the context. Remember that if your spring bean scope is “prototype” then it’s not completely managed by the spring container and the PreDestroy method won’t get called.
 @Scope -> to set bean scope
 @Required -> is a method-level annotation used in the setter method of a bean property and therefore making the setter-injection compulsory. This annotation suggests that the required bean property must be injected with a value at the configuration time & shouldn't be null.
+@ExceptionHandler
+@ControllerAdvice (AOP) //for global exception handler
+
 
 JPA(Java Persistence API)
 -------------------------
@@ -336,13 +341,5 @@ theModel.addAttribute("attribute name", attribute value);
 methodname(@ModelAtrribute("name of modelAtrribute in jsp form") Student thestudent) //it binds form data to obj
 										     //it fetches all feilds of an obj
 
-
-@PathVariable	//takes id from uri and assigns to a variable
-@PostConstruct //to load student(class obj) data only once
-
-@ExceptionHandler
-@ControllerAdvice (AOP) //for global exception handler
-
-@RequestBody //binds pojo to a method parameter....to pass obj as i/p data
 
 

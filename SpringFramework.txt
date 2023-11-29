@@ -157,10 +157,27 @@ Autowire:
 
 
 
+
 ===============SPRING BOOT================
 
-FLOW
------
+Spring Boot is an open-source Java framework that makes developing web applications and microservices faster and easier. It is a combination of Spring Framework and Embedded Servers. The main goal of Spring Boot is to reduce development, unit test, and integration test time. With Spring Boot, you can concentrate on business aspects rather than infrastructure.
+Spring Boot Advantages
+	It Create stand-alone Spring applications
+	It also minimizes writing multiple boilerplate codes, XML configuration, and annotations (There is no need for XML configuration.)
+	It easily tests web applications using several Embedded HTTP servers like as Tomcat, Jetty etc.
+	It Provides ‘starter’ dependencies to simplify the build configuration.
+	It includes features that are ready for production such as metrics, health checks and externalised settings.
+
+Spring Initializer is a Web-based tool that generates the Spring Boot project structure.
+
+The spring boot follows a layered architecture in which each layer communicates to other layers
+The spring boot consists of the following four layers:
+1.Presentation Layer – Authentication & converting the JSON field’s parameter to Java Objects and vice-versa.
+2.Business Layer – contains all the business logic. It consists of service classes. It is responsible for validation and authorization.
+3.Persistence Layer – contains all the database storage logic. It is responsible for converting business objects to the database row and vice-versa.
+4.Database Layer – Actual Database. It is responsible for performing the CRUD operations.
+
+FLOW:
 Client--->Controller<--->Service lyr<--->Dao lyr<--->DB
   |		|
   <--Jsp pages<--
@@ -198,23 +215,21 @@ Dependencies
 ------------
 spring-boot-starter-web //contains spring-web,web-mvc,rest,hibernate,tomcat etc
 spring-boot-devtools //used to automatically reload our appllication whenever code is updates
-spring-boot-starter-acutator //used to monitor & manage our application, check app's health,access metrics(By deafult, /health & /info are available prefixed by /acutator )
-
-Spring data rest ---->no need of controller and services //search for more info  
+spring-boot-starter-acutator //used to monitor & manage our application, check app's health,access metrics(The default endpoint is ‘localhost:8080/actuator’. By deafult /health & /info are available prefixed by /acutator, To add/include all ID/endpoints about your application you can do it in application.properties by following – management.endpoints.web.exposure.include=*)
+h2 // it is an open-source lightweight Java database.
+‘Lombok’ dependency  // it is used to reduce boilerplate code for model/data objects. like, @Data annotation is a shortcut annotation and bundles @ToString, @Getter, @Setter, @EqualsAndHashCode and @RequiredArgsConstructor annotations into a single annotation to reduce boilerplate code. @NoArgsConstructor annotation is used to generate a constructor with no arguments. @AllArgsConstructor annotation is used to generate a parameterized constructor which accepts a single parameter for each field and initializes them using it.
 
 
 Annotations
 ------------
-@PathVariable(String id) -> it takes variable from url path & assign to a variable 
-@RequestBody(LoginForm logForm) -> takes Json data/HttpRequest body from client and assigns it to respective Object by deserialization.
-@ResponseBody() -> tells a controller that the object returned is automatically serialized into JSON and passed back into the HttpResponse object.
-@RestController -> is used for making restful web services. It is combination of the @controller and @ResponseBody. This annotation is used at the class level and allows the class to handle the requests made by the client.
 @Autowired -> It injects object dependency implicitly. We use @Autowired to mark the dependency that will be injected by the Spring container. It is applied to the fields, setter methods, and constructors.
 @SpringBootApplication -> It is used to mark the main class of a Spring Boot application. It is the combination of  @Configuration, @EnableAutoConfiguration and @ComponentScan annotations.
-@EnableAutoConfiguration -> is used to enable the auto-configuration feature. It automatically registers the beans with @Component, @Configuration, @Bean, and meta-annotations for building custom stereotype annotations, etc.
+@EnableAutoConfiguration -> is used to enable the auto-configuration feature. It automatically registers the beans with @Component, @Configuration, @Bean that are present in the classpath.
 @Controller -> it indicates that they’re front controllers and responsible to handle user requests and return the appropriate response. It is typically used in combination with annotated handler methods based on the @RequestMapping annotation. It can be applied to classes only. It’s used to mark a class as a web request handler
-@Service -> to indicate that they’re holding the business logic(service layer).
-@Repository -> to indicate that they’re dealing with CRUD operations, usually, it’s used with DAO (Data Access Object) or Repository implementations that deal with database tables.
+@RestController -> specifies that this class is a controller for RESTful API requests.
+@RequestMapping -> specifies the base URL for all requests handled by this controller.
+@Service -> to indicate that they’re holding the business logic(service layer). Spring will create an instance of it automatically.
+@Repository -> to indicate that they’re dealing with CRUD operations, usually, it’s used with DAO (Data Access Object) or Repository implementations that deal with database tables. Spring will create an instance of it automatically. 
 @Configuration -> indicates that the class has @Bean definition methods. So Spring container can process the class and generate Spring Beans to be used in the application.
 @Bean -> is applied on a method to specify that it returns a bean to be managed by Spring context. Spring Bean annotation is usually declared in Configuration classes methods. Whenever you are using the @Bean annotation to create the bean you don’t need to use the @ComponentScan annotation inside your configuration class.
 @ComponentScan -> is used along with the @Configuration annotation to specify the packages that we want to be scanned, becoz we dont want to use beans.xml. Spring can also start scanning from the specified package, which we can define using basePackageClasses() or basePackages(). If no package is specified, then it considers the package of the class declaring the @ComponentScan annotation.
@@ -222,14 +237,30 @@ Annotations
 @Qualifier-> is used to resolve the autowiring conflict when there are multiple beans of the same type. The @Qualifier annotation can be used on any class annotated with @Component or on methods annotated with @Bean.
 @Primary -> it indicates that a particular bean should be given preference when multiple beans are candidates to be autowired to a single-valued dependency.  
 @Value -> is used to assign default values to variables and method arguments. We can read spring environment variables as well as system variables using this annotation.
-@Id -> marks a field in a model class as the primary key
 @PostConstruct -> it gets executed after the spring bean is initialized. We can have only one method annotated with this  annotation.
 @PreDestroy -> it gets called when the bean instance is getting removed from the context. Remember that if your spring bean scope is “prototype” then it’s not completely managed by the spring container and the PreDestroy method won’t get called.
 @Scope -> to set bean scope
 @Required -> is a method-level annotation used in the setter method of a bean property and therefore making the setter-injection compulsory. This annotation suggests that the required bean property must be injected with a value at the configuration time & shouldn't be null.
+
+@PathVariable(String id) -> it takes variable from url path & assign to a variable 
+@RequestBody(LoginForm logForm) -> takes Json data/HttpRequest body from client and assigns it to respective Object by deserialization.
+@ResponseBody() -> tells a controller that the object returned is automatically serialized into JSON and passed back into the HttpResponse object.
+@RestController -> is used for making restful web services. It is combination of the @controller and @ResponseBody. This annotation is used at the class level and allows the class to handle the requests made by the client.
+
+@Entity -> specifies that this class is an entity and should be mapped to a database table.
+@Table -> specifies the name of the database table that will store instances of this entity.
+@Id -> specifies a field in a model class as the primary key
+@GeneratedValue -> specifies that the primary key should be generated automatically.
+@Column - > represents a column
+
+@EnableScheduling -> It facilitates Spring Boot with scheduled task execution capability
+@Scheduled  -> for scheduling a task 
 @ExceptionHandler
 @ControllerAdvice (AOP) //for global exception handler
 
+
+Spring data rest ---->no need of controller and services //search for more info  
+Spring Data JDBC -->Spring Data JDBC is a POJO class. @Table, @ID, and @Column annotations are helpful to mention for direct connection with the database. (for normal Spring JDBC we dont have anotations and Id, column names should match with names in DB)
 
 JPA(Java Persistence API)
 -------------------------
@@ -267,6 +298,13 @@ DELETE --- DELETE
 
 
 ===============SPRING MVC================
+
+Spring MVC is a Model View, and Controller based web framework widely used to develop web applications. Spring MVC framework enables the separation of modules namely Model View, Controller, and seamlessly handles the application integration.
+Model – A model can be an object or collection of objects which basically contains the data of the application.
+View – A view is used for displaying the information to the user in a specific format. Spring supports various technologies like freemarker, velocity, and thymeleaf.
+Controller – It contains the logical part of the application. @Controller annotation is used to mark that class as a controller.
+Front Controller – It remains responsible for managing the flow of the web application. Dispatcher Servlet acts as a front controller in Spring MVC.
+
 DispatcherServlet acts as the Front Controller for Spring-based web applications.Any request is going to come into our website the front controller is going to stand in front and is going to accept all the requests and once the front controller accepts that request then this is the job of the front controller that it will make a decision that who is the right controller to handle that request.
 
 In Spring, the /WEB-INF/web.xml file is the Web Application Deployment Descriptor of the application. This file is an XML document that defines everything about your application that a server needs to know (except the context path, which is assigned by the Application Deployer and Administrator when the application is deployed), servlets, and other components like filters or listeners, initialization parameters, container-managed security constraints, resources, welcome pages, etc. 

@@ -1,27 +1,43 @@
+Hibernate is a Java framework used to map Java objects to database tables for simplifying database operations. 
+It is an open-source, non-invasive, lightweight java ORM(Object-relational mapping) framework that is used to develop persistence logic that is independent of Database software. With features like automatic transaction management and caching, Hibernate simplifies and optimizes database interactions, making it an indispensable framework for efficient data management in Java applications. Hibernate supports almost all the major RDBMS.
 
 HIBERNATE vs JDBC
--------------------
-1) A.Hibernate is database independent and same code can work for many databases with minor changes.
-   B.JDBC is database dependent i.e. one needs to write different codes for different database.
-2) A.For Hibenate no need to have SQL knowledge
-   B.For JDBC we need to have SQL knowledge
+------------------
+1) A)Hibernate is database independent and same code can work for many databases with minor changes.
+   B)JDBC is database dependent i.e. one needs to write different codes for different database.
+2) A)For Hibenate no need to have SQL knowledge
+   B)For JDBC we need to have SQL knowledge
+3)A)Hibernate is a higher-level ORM framework that automates these tasks, allowing developers to work with Java objects and abstracting away the low-level database operations.
+  B)JDBC is a low-level API that requires manual handling of database connections, writing SQL queries, and managing result sets
 
 
-* Dialect --> converts HQL queries to specific DB queries
+SQL Dialect --> converts HQL queries to specific DB queries
+Dialect is a class that acts as a bridge between Java JDBC types and SQL types. The SQL dialect converts the HQL(Hibernate Query Language) query which we write in java or any other object-oriented program to the specific database SQL query. 
+	- hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect  //DB specific dielect we need to use
+HQL is database-independent
+EX: String hib = "FROM Student"; / String hib = "FROM Student S WHERE S.id = 5";
+    Query query = session.createQuery(hib);
+    List results = query.list();
+
+Native SQL queries are useful when you need to perform complex queries that cannot be expressed using Hibernate’s Query Language (HQL). To execute a native SQL query in Hibernate, you need to create an SQLQuery object and set the SQL statement to be executed.
 
 
-Hibernate  (hibernate.cfg.xml---->config file)
-----------
+Hibernate Anotations (hibernate.cfg.xml---->config file)
+--------------------
 @Entity
 @Table(name="name of table in DB ")
-
 @Id //primary key
+@GeneratedValue(strategy = GenerationType.IDENTITY)  //to autoincrement
 @Column(name="name of column in DB")
+@Sevice //Service impl
+@Repository //DAO impl
+@Transactional //instead of beginTransaction(); getTransaction().commit();
+	       //use it in servive lyr, if theres no service lyr, impl it in dao lyr
+@Inheritance -> This annotation defines the inheritance strategy to be used for an entity class hierarchy. It is specified on the entity class that is the root of the entity class hierarchy(that means; remaining enitity classes will get the fields of first entity class for which @Inheritance is used).
+If this annotation is not specified or if no inheritance is specified for an entity class hierarchy, the SINGLE_TABLE mapping strategy is used.
+@Transient -> Tells the hibernate, not to add this particular column
 
-
-DAO----> Session Factory---->Data souce---->DB	(Normally we have to do all these config's but SpringBoot automatically do's that for us)	
-					(based on added dependencies & conditions in application.properties)
-
+DAO----> Session Factory---->Data souce---->DB	(Normally we have to do all these config's but SpringBoot automatically do's that for us, based on added dependencies & conditions in application.properties)
 
 SessionFactory ---> reads hibernate config file, creates session objects, creates only once in the app
 Session ---> wraps a jdbc connection, used to save/retrive objects
@@ -36,23 +52,103 @@ session.beginTransaction();
 session.getTransaction().commit();
 
 
+There are mainly four states of the Hibernate Lifecycle :
+1)Transient State -> The transient state is the first state of an entity object. When we instantiate an object of a POJO class using the new operator then the object is in the transient state. This object is not connected with any hibernate session. 
+2)Persistent State -> Once the object is connected with the Hibernate Session then the object moves into the Persistent State.
+3)Detached State -> For converting an object from Persistent State to Detached State, we either have to close the session or we have to clear its cache. As the session is closed or cache is cleared, then any changes made to the data will not affect the database table. 
+4)Removed State -> when the entity object is deleted from the database then the entity object is known to be in the removed state. It is done by calling the delete() operation.
+
+
+JPA:
+----
+JPA stands for Java Persistence API (Application Programming Interface). It is a Java specification that gives some functionality and standard to ORM tools. It is used to examine, control, and persist data between Java objects and relational databases. It is observed as a standard technique for Object Relational Mapping. 
+As it is a specification of Java, JPA does not conduct any functioning by itself so, it needs implementation. Hence, for data persistence ORM tools like Hibernate, implements JPA specifications. javax.persistence package contains the JPA classes and interfaces. 
+In very simple terms we can say JPA (Java persistence api) is like an interface and the hibernate is the implementation of the methods of the interface
+ - Hibernate is an implementation of JPA guidelines.
+ - It helps in mapping Java data types to SQL data types.
+ - It is the contributor of JPA.
+
+
+get() vs load()
+---------------
+1)A)get() returns null if the object doesn’t exist in the database or session cache.  //session.get(Student.class, 102); 
+  B)load() throws ObjectNotFoundException if the object doesn’t exist in the database or session cache. 
+ //session.load(Student.class,102);
+2)A)get() is used to fetch an object when it is not sure whether the object exists or not.
+  B)load() is used to fetch an object if it is sure that object exists.
+
 Advanced mappings
 -------------------
-@OneToOne - eager
-@OneToMany - lazy
-@ManyToOne - eager
-@ManyToMany - lazy
+1) @OneToOne - eager
+It represents that a single entity is associated with a single instance of the other entity
+two types - One-to-one unidirectional
+	    One-to-one bidirectional
+Ex: @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_gfg_detail_id") //use foreign key of connecting table
+    private StudentGfgDetail studentGfgDetail;
+
+	@OneToOne(mappedBy = "studentGfgDetail", cascade = CascadeType.ALL) //use obj name for this given in main entity class(table)
+    	private Student student;
+
+2) @OneToMany - lazy
+	Ex:@OneToMany(mappedBy ="ob")  //use object used in mapped entity for this entity
+  	   private List<Model>models;
+
+3) @ManyToOne - eager
+Many employees work in the same company so all the working employees have the same company address. Many employees have one address
+Ex: @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
+@OneToMany(cascade = CascadeType.ALL, mappedBy = "address") //use above obj name for this
+private List<Employee> employee = new ArrayList<>();
+
+4)@ManyToMany - lazy
+A Many-to-Many mapping has to be implemented using a Set java collection and it should not contain any duplicate element. A Set can be mapped with a <set> element in the mapping table.
+	//mapping for this has to be done in xml ...needs to check further
+
+// Syntax
+@ManyToOne(cascade = CascadeType.ALL)
+@JoinColumn(name = "Foreign key column")
+CascadeType.ALL – Propagates all operations(create, update, read, delete) from parent to target entity.
+CascadeType.PERSIST – Propagates persist from parent to target entity.
+CascadeType.MERGE – Propagates merge from parent to target entity.
+CascadeType.REMOVE – Propagates remove from parent to target entity.
+CascadeType.REFRESH – Propagates refresh from parent to target entity.
+CascadeType.DETACH – Propagates detach from parent to target entity.
 
 
 Eager vs Lazy loadings
 ----------------------
-Eager -- retreive everything
-Lazy(preffered) -- retreive on request/demand basis
+FetchType is an enumerated type in the Java Persistence API (JPA) that specifies whether the field or property should be lazily loaded or eagerly loaded. It is used in the javax.persistence.FetchType enum.
+
+Eager -- retrieve everything
+	This FetchType means that the associated entity will be fetched together with the main entity when the main entity is fetched from the database.
+Lazy(preffered) -- retrieves on request/demand basis
+	This is the default FetchType in Hibernate. It means that the associated entity will be fetched only when it is accessed for the first time.
+ex: @OneToOne(fetch = FetchType.LAZY), @OneToOne(fetch = FetchType.EAGER)
 
 
-@Sevice //Service impl
-@Repository //DAO impl
-@Transactional //instead of beginTransaction(); getTransaction().commit();
-	       //use it in servive lyr, if theres no service lyr, impl it in dao lyr
+Caching:
+---------
+Caching in Hibernate means storing and reusing frequently used data to speed up your application. 
+There are two kinds of caching: 
+ - Session-level 
+ - SessionFactory-level
+Level 1 cache is a cache that stores objects that have been queried and persist to the current session. This cache helps to reduce the number of database round trips by storing objects that are frequently accessed in the session. Level 1 cache is the default cache that is stored by default in hibernate. It is related to the hibernate session object. In addition, since the first-level cache is associated with a single session, it ensures that changes made to entities within one session are not visible to other sessions until they are committed to the database.
+In the Hibernate configuration file (hibernate.cfg.xml) add the following property:
+	<property name="hibernate.cache.use_query_cache">true</property>
+@Cacheable - used to configure the first-level cache for a specific entity //use this in entity class to be cached
 
+Level 2 caching is a built-in caching mechanism that allows you to cache data across several sessions. Level 2 cache stores data in your application’s shared cache region, which is accessible by every Hibernate session in your application. Level 2 caching can help optimize your application by reducing the number of database queries needed to load data.
 
+advantages:
+	Reduced Latency
+	Reduced Database Load
+	Increased Throughput
+	Reduced Resource Utilization
+	Improved Scalability/ performance
+
+Cache Eviction
+--------------
+When a cache gets full, it can’t store new data without getting rid of old data. That’s what cache eviction is all about. It’s the process of getting rid of data in the cache to make room for new stuff. It’s done by using algorithms to figure out which data to get rid of. There are different policies for doing this, like LRU (Least Recently Used), LFU (Frequently Used), and RPP (Random Replacement). These policies are picked based on the type of data being stored and how often it’s accessed. The idea is to make sure the cache only has stuff that’s important and frequently accessed. That way, it’ll be more efficient and work better.

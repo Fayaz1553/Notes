@@ -22,6 +22,10 @@ cd .. ---> to go back to previous directory(parent dir)
 cd ../../.. ---->to tell how many times to go back(Here; 3 times)
 cd ---> go's to home directory($)
 
+echo <just prints the matter given here>
+echo > <filename>  //to create a file > means create a file with the name given next to it
+dir  //lists the folders in it. same as ls (for windows)
+type <file name>  //shows the content inside of file like cat command in bash
 
 cat filename.txt  -----> to see data inside file
 cat > filename.txt ----> to create file and can directly enter data in a file(to exit press---> CRTL+C)
@@ -61,7 +65,7 @@ factor ---> u r in prime factor mode.. It displays prime factors of a num(to qui
 nslookup oss-ext1-solstice.vfde.corp.amdocs.aws  //for ip of dns
 
 scp <file/folder name> root@<master-IP of target env>:<location in target env>	// to copy files/certs from one machine to another
-	Ex: scp VFGS-ASOM.cer root@10.246.34.12:root/keys/kubernetes
+Ex: scp VFGS-ASOM.cer root@10.246.34.12:root/keys/kubernetes
 
 
 FILE SYSTEMS

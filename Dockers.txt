@@ -162,7 +162,10 @@ K -n dop get all | grep debug     (Searches for all files & filter with name deb
 K -n dop describe pod <pod name>
 K -n dop logs <pod name> -f --since 1m or 5m
 k -n dop logs onsi-servo-68566f65bd-ldz6x --since 5m > servoLogsNew.json
-
+k -n dop get logs -f app=<ms name>
+kubectl -n <namespace> logs -f deployment/<app-name> --all-containers=true --since=10m
+kubectl -n dop expose deployment.apps/onsi-servo --type=NodePort --name=servo-exposed
+kubectl -n dop expose service servo --name=servo-debug --type=NodePort --port=9527
 
 
 

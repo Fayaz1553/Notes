@@ -158,6 +158,7 @@ Autowire:
 
 
 
+
 ===============SPRING BOOT================
 
 Spring Boot is an open-source Java framework that makes developing web applications and microservices faster and easier. It is a combination of Spring Framework and Embedded Servers. The main goal of Spring Boot is to reduce development, unit test, and integration test time. With Spring Boot, you can concentrate on business aspects rather than infrastructure.
@@ -234,8 +235,8 @@ Annotations
 @Bean -> is applied on a method to specify that it returns a bean to be managed by Spring context. Spring Bean annotation is usually declared in Configuration classes methods. Whenever you are using the @Bean annotation to create the bean you don’t need to use the @ComponentScan annotation inside your configuration class.
 @ComponentScan -> is used along with the @Configuration annotation to specify the packages that we want to be scanned, becoz we dont want to use beans.xml. Spring can also start scanning from the specified package, which we can define using basePackageClasses() or basePackages(). If no package is specified, then it considers the package of the class declaring the @ComponentScan annotation.
 @Component -> it is a class-level annotation. It is used to denote a class as a Component(bean). We can use @Component across the application to mark the beans as Spring’s managed components
-@Qualifier-> is used to resolve the autowiring conflict when there are multiple beans of the same type. The @Qualifier annotation can be used on any class annotated with @Component or on methods annotated with @Bean.
 @Primary -> it indicates that a particular bean should be given preference when multiple beans are candidates to be autowired to a single-valued dependency.  
+@Qualifier ->  indicates specific bean should be autowired when there are multiple candidates. used to resolve the autowiring conflict when there are multiple beans of the same type. It can be used on any class annotated with @Component, @Service etc or on methods annotated with @Bean.
 @Value -> is used to assign default values to variables and method arguments. We can read spring environment variables as well as system variables using this annotation.
 @PostConstruct -> it gets executed after the spring bean is initialized. We can have only one method annotated with this  annotation.
 @PreDestroy -> it gets called when the bean instance is getting removed from the context. Remember that if your spring bean scope is “prototype” then it’s not completely managed by the spring container and the PreDestroy method won’t get called.
@@ -259,6 +260,38 @@ Annotations
 @ControllerAdvice (AOP) //for global exception handler
 
 
+@Qualifier vs @Primary
+----------------------
+there may be scenarios where multiple beans of the same type exist, leading to ambiguity during autowiring. This is where the @Qualifier and @Primary annotations come to our rescue.
+@Qualifier -> used to resolve ambiguity by specifying which exact bean should be wired where there are multiple beans of the same type.
+@Primary - > used to specify which bean is given preference/priority when multiple beans of the same type exist.
+
+@Component
+@Primary
+class TwoWheeler implements Vehicle {}
+
+@Component
+class ThreeWheeler implements Vehicle {}
+
+@Component
+@Qualifier("FourWheelerQualifier")
+class FourWheeler implements Vehicle {}
+
+@Component
+class Bike {
+    @Autowired  // Bean TwoWheeler will be autowired in this case becoz it is @Primary
+    private Vehicle vehicle;
+}
+
+@Component
+class Car {
+    @Autowired  // Bean FourWheeler will be autowired in this case becoz we explicitly mentioned which bean we want.
+    @Qualifier("FourWheelerQualifier")
+    private Vehicle vehicle;
+}
+Note - @Qualifier has higher priority than @Primary annotation, if used together.
+
+
 Spring data rest ---->no need of controller and services //search for more info  
 Spring Data JDBC -->Spring Data JDBC is a POJO class. @Table, @ID, and @Column annotations are helpful to mention for direct connection with the database. (for normal Spring JDBC we dont have anotations and Id, column names should match with names in DB)
 
@@ -277,7 +310,7 @@ SpringBoot automatically creates datasource and Entitymanager
 Data binding
 -------------
 It is the process of converting JSON data to and from java POJO's
-
+@JsonInclude(Include.NON_NULL)  // to exclude any attribute whose value is null in JSON
 @JsonIgnoreProperties(ignoreUnknown = true)  //to ignore additional changes in json that pojo class unware to avoid exceptions
 
 
@@ -376,6 +409,4 @@ theModel.addAttribute("attribute name", attribute value);
 -or-
 methodname(@ModelAtrribute("name of modelAtrribute in jsp form") Student thestudent) //it binds form data to obj
 										     //it fetches all feilds of an obj
-
-
 

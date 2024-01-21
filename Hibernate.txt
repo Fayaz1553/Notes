@@ -76,6 +76,9 @@ get() vs load()
  //session.load(Student.class,102);
 2)A)get() is used to fetch an object when it is not sure whether the object exists or not.
   B)load() is used to fetch an object if it is sure that object exists.
+3)A)get() returns fully initialized object, so this method EAGER load the object  
+  B)load() always returns proxy object, so this method is LAZY load the object.
+
 
 Advanced mappings
 -------------------
@@ -122,11 +125,24 @@ Eager vs Lazy loadings
 ----------------------
 FetchType is an enumerated type in the Java Persistence API (JPA) that specifies whether the field or property should be lazily loaded or eagerly loaded. It is used in the javax.persistence.FetchType enum.
 
-Eager -- retrieve everything
-	This FetchType means that the associated entity will be fetched together with the main entity when the main entity is fetched from the database.
-Lazy(preffered) -- retrieves on request/demand basis
-	This is the default FetchType in Hibernate. It means that the associated entity will be fetched only when it is accessed for the first time.
+Eager -> retrieve everything
+This FetchType means that the associated entity will be fetched together with the main entity when the main entity is fetched from the database.
+Lazy(preffered) -> retrieves on request/demand basis
+This is the default FetchType in Hibernate. It means that the associated entity will be fetched only when it is accessed for the first time.
 ex: @OneToOne(fetch = FetchType.LAZY), @OneToOne(fetch = FetchType.EAGER)
+
+
+N+1 problem:
+------------ 
+The N+1 problem is a performance issue that often occurs in database queries, particularly in the context of object-relational mapping (ORM) systems. The problem arises when you retrieve a collection of entities along with their related entities in a one-to-many or many-to-many relationship (when you use `FetchType. LAZY` for your entity associations). The "N+1" in the term refers to the number of queries executed: one initial query to retrieve the main entities and an additional query for each related entity, resulting in N+1 queries.
+
+simple example to illustrate the N+1 problem:
+Let's say you have a database model with two entities: Author and Book, where each author can have multiple books. If you retrieve a list of authors and then iterate through each author to access their books, you may end up executing one query to retrieve the authors and N additional queries to fetch the books for each author.
+
+To avoid the N+1 problem, you can use the following techniques:
+------------------------
+1) By using JOIN FETCH. select a from Author a left join fetch a.books
+2) Eager Loading: Eager loading involves fetching the related entities along with the main entities in a single query, reducing the need for additional queries. @ManyToOne(fetch = FetchType. EAGER)
 
 
 Caching:

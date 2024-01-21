@@ -67,6 +67,23 @@ nslookup oss-ext1-solstice.vfde.corp.amdocs.aws  //for ip of dns
 scp <file/folder name> root@<master-IP of target env>:<location in target env>	// to copy files/certs from one machine to another
 Ex: scp VFGS-ASOM.cer root@10.246.34.12:root/keys/kubernetes
 
+curl --location 'https://{{host}}/dop/security/rest/loginservice/login'
+--header 'Content-Type: application/json'
+--data '{
+"userID": "OHProxyUser",
+"password": "OHProxyUser123"}'
+
+curl -X POST 'https://api-xtest-1.x-test03.aws.solstice.vodafone.com/accountManagement/v1/billingAccount' 
+-H 'Authorization:Bearer xxx' 
+-H 'Accept:application/json' 
+-H 'Content-Type:application/json' 
+-d '{
+	"extensions": {
+		"migrationInformation":
+		{
+			"migrationProcess": "MoD"
+		}
+}}'
 
 FILE SYSTEMS
 -------------

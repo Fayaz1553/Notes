@@ -31,11 +31,13 @@ Hibernate Anotations (hibernate.cfg.xml---->config file)
 @Column(name="name of column in DB")
 @Sevice //Service impl
 @Repository //DAO impl
-@Transactional //instead of beginTransaction(); getTransaction().commit();
-	       //use it in servive lyr, if theres no service lyr, impl it in dao lyr
 @Inheritance -> This annotation defines the inheritance strategy to be used for an entity class hierarchy. It is specified on the entity class that is the root of the entity class hierarchy(that means; remaining enitity classes will get the fields of first entity class for which @Inheritance is used).
 If this annotation is not specified or if no inheritance is specified for an entity class hierarchy, the SINGLE_TABLE mapping strategy is used.
 @Transient -> Tells the hibernate, not to add this particular column
+@Transactional //instead of beginTransaction(); getTransaction().commit();
+	       //use it in servive lyr, if theres no service lyr, impl it in dao lyr
+The @Transactional annotation in Spring is used to specify that a method or a class method should be executed within a transactional context. This means that if the method executes successfully, any changes made to the database within that method will be committed, and if an exception occurs, the changes will be rolled back.
+
 
 DAO----> Session Factory---->Data souce---->DB	(Normally we have to do all these config's but SpringBoot automatically do's that for us, based on added dependencies & conditions in application.properties)
 

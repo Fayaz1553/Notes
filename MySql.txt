@@ -3,7 +3,7 @@ SQL is a query language which is used to access, update, and manipulate the data
 MySQL is a relational database that uses SQL to query a database. MySQL stores the existing data in a database in an organized manner.
 
 Different Types of Database Keys;
-Candidate Key - A set of one or more columns that can uniquely identify a record in a table. Except for the primary key, the remaining attributes are considered a candidate key.
+Candidate Key - A set of one or more columns that can uniquely identify a record in a table are known as candidate keys, and you can use each candidate key as a Primary Key.
 Primary Key - It is the first key used to uniquely identify a record in table
 Super Key -  A super key is a group of single or multiple keys that identifies rows in a table.
 Alternate Key - A candidate key other than the primary key is called an alternate key. (also called as secondary key)
@@ -135,19 +135,17 @@ GROUP BY  //It groups the duplicate data into one
 HAVING  //used to filter the grouped data,should be used after group by.
 ORDER BY  //It arranges the data either in ascending or descending order.It should be used always as the last statement in the SQL query
 
-//job column is present in select query but not in the group by query. If it is enclosed in any of the group functions like sum(sal) etc – then it is not an error. But whatever column is included in the select query must also be included in the group by query.
-SELECT emp_name, job, MAX(salary) AS "Sal"  
-FROM employees  				
-GROUP BY emp_name; //needs to verify 
+Note : job column is present in select query but not in the group by query. If it is enclosed in any of the group functions like sum(sal) etc – then it is not an error. But whatever column is included in the select query must also be included in the group by query.
+	SELECT emp_name, job, MAX(salary) AS "Sal"  
+	FROM employees  				
+	GROUP BY emp_name; //needs to verify 
 
 
 Contol Statements
 ------------------
 SELECT IF(200>350,'YES','NO'); //IF function 
  
-SELECT lastname,  
-IF(age>20,"Mature","Immature") As Result  
-FROM student;  
+SELECT lastname, IF(age>20,"Mature","Immature") As Result FROM student;  
 
 SELECT IFNULL(NULL,5); //If the first expression is not NULL, it will return the first expression. Otherwise, it will return the second expression
 
@@ -171,8 +169,8 @@ DELIMITER ;
 CALL procedure_name( parameter(s))  
 
 
-Operators:
-----------
+Operators
+---------
 // AND/OR --> AND - both conditions to be true, OR - any one condition has to be true
 SELECT * FROM cus_tbl WHERE cus_firstname = 'Abijeet' AND/OR cus_id > 3;  
 
@@ -207,55 +205,48 @@ max()
 SELECT emp_id, emp_fname, emp_lname, dept_id,     
 GROUP_CONCAT(designation) as "designation" FROM employee group by emp_id;
 
- first() & last()  //we must have to use the LIMIT clause. It is because FIRST()&LAST() function only supports in MS Access.
+first() & last()  //we must have to use the LIMIT clause. It is because FIRST() & LAST() function only supports in MS Access.
 
 
-JOINS:  //Joins are used when we need to fetch the data from multiple tables based on the relationship between the fields of the tables
+JOINS:  Joins are used when we need to fetch the data from multiple tables based on the relationship between the fields of the tables
 ------
-//CROSS JOIN is used to combine all possibilities of the two or more tables and returns the result that contains every row from all contributing tables. The CROSS JOIN is also known as CARTESIAN JOIN
+1) CROSS JOIN is used to combine all possibilities of the two or more tables and returns the result that contains every row from all contributing tables. The CROSS JOIN is also known as CARTESIAN JOIN
 SELECT customer.customer_id, customer.cust_name, orders.order_id, orders.price  
 FROM 
 customer CROSS JOIN orders; 
- 
 ----->In the absence of a WHERE condition the CARTESIAN JOIN will behave like a CARTESIAN PRODUCT . i.e., the number of rows in the result-set is the product of the number of rows of the two tables.
 In the presence of WHERE condition this JOIN will function like a INNER JOIN.
 Generally speaking, Cross join is similar to an inner join where the join-condition will always evaluate to True 
 
-
-//INNER JOIN keyword selects all rows from both the tables as long as the condition satisfies.
+2) INNER JOIN selects all rows from both the tables as long as the condition satisfies.
 SELECT students.stud_fname, students.stud_lname, students.city, technologies.technology    
 FROM 
 students INNER JOIN technologies ON students.student_id = technologies.tech_id;  //INNER JOIN or JOIN or EQUI-JOIN
 
-
-//Left Joins returns all records from the left-hand table and only the matching records from the right side table
+3) Left Joins returns all records from the left-hand table and only the matching records from the right side table
 SELECT customers.customer_id, customers.cust_name, customers.occupation, orders.price, orders.date 
 FROM 
-customers LEFT JOIN orders USING(customer_id);  //LEFT OUTER JOIN
+customers LEFT JOIN orders ON customers.customer_id = orders.customer_id;  //LEFT OUTER JOIN
 
 --->   the table customers and orders have the same column name, which is customer_id. In that case, we can also be used with the USING clause to access the records.  
-
-
-//Right Join is used to joins two or more tables and returns all rows from the right-hand table, and only those results from the other table that fulfilled the join condition.
+4) Right Join is used to joins two or more tables and returns all rows from the right-hand table, and only those results from the other table that fulfilled the join condition.
 SELECT customers.customer_id, Customers.cust_name, orders.price, orders.date  
 FROM 
-customers RIGHT JOIN orders ON customers.customer_id = orders.customer_id  //RIGHT OUTER JOIN
+customers RIGHT JOIN orders USING(customer_id) //RIGHT OUTER JOIN
 ORDER BY  customer_id; 
 
-
-//FULL OUTER JOIN contains all rows from both tables, but not like cross join
+5) FULL OUTER JOIN contains all rows from both tables, but not like cross join
 SELECT customers.customer_id, Customers.cust_name, orders.price, orders.date  
 FROM 
 customers FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;  //OUTER JOIN
 
-
-//SELF JOIN is a join that is used to join with itself. Self Join uses table aliases,This is used to compare values in a column with other values in the same column in the same table
+6) SELF JOIN is a join that is used to join with itself. Self Join uses table aliases, This is used to compare values in a column with other values in the same column in the same table
 SELECT a.ROLL_NO , b.NAME
 FROM Student a, Student b	//No join command inbetween
 WHERE a.ROLL_NO < b.ROLL_NO; 
 
 
-Normalization:
+Normalization
 -------------
 Normalization is the process to eliminate data redundancy and enhance data integrity in the table. It also helps to organize the data in the database.
 1NF ->  1. Every colum/cell need to have single value (atomicity of the table is 1)
@@ -275,33 +266,32 @@ Normalization is the process to eliminate data redundancy and enhance data integ
 Imp Concepts
 -------------
 1)UNION operator allows us to combine two or more results from multiple SELECT queries into a single result set. It has a default feature to remove the duplicate rows from the tables
-	The number and order of the columns should be the same in all queries.
-	Union and Join are different.
-2)The UNION ALL operator combines two or more results from multiple SELECT queries and returns all records into a single result set. It does not remove the duplicate rows from the output
-SELECT City FROM student1  
-UNION  
-SELECT City FROM student2  
-ORDER BY City;  
+- The number and order of the columns should be the same in all queries.
+- Union and Join are different.
+	SELECT City FROM student1  
+	UNION  
+	SELECT City FROM student2 ORDER BY City;
+
+2)The UNION ALL operator combines two or more results from multiple SELECT queries and returns all records into a single result set. It does not remove the duplicate rows from the output 
 
 3)Limit query is used to restrict the number of rows returns from the result set, rather than fetching the whole set in the MySQL database.
-SELECT column_list  
-FROM table_name  
-LIMIT offset, limit-count;  
+	SELECT [column_list] FROM table_name  
+	LIMIT offset, limit-count;  
 
-4)to find Nth highest salary in the Employee table with & without using limit
-SELECT DISTINCT salary FROM emp ORDER BY salary DESC LIMIT n-1,1; //using limit
+4)find Nth highest salary in a given table with & without using limit
+	SELECT DISTINCT salary FROM emp ORDER BY salary DESC LIMIT n-1, 1;  //using limit
 
-5)finding the duplicate values in a table
-SELECT name, email, COUNT(name)  
-FROM student_contacts  
-GROUP BY name  
-HAVING COUNT(name) > 1; 
+5)find the duplicate values in a table
+	SELECT name, email, COUNT(name)  
+	FROM student_contacts  
+	GROUP BY name  
+	HAVING COUNT(name) > 1; 
 
 6)Delete Duplicate Record Using Inner Join
-DELETE S1 FROM student_contacts AS S1  
-INNER JOIN student_contacts AS S2   
-WHERE S1.id < S2.id AND S1.email = S2.email;  //use < to keep the lowest id in the table
+	DELETE S1 FROM student_contacts AS S1  
+	INNER JOIN student_contacts AS S2   
+	WHERE S1.id < S2.id AND S1.email = S2.email;  //use < to keep the lowest id in the table
 
-7)REGEXP_INSTR() Function returns the index value of the substring by matching the given string. This function returns 0 if no match is found. Else, it returns 1.
-SELECT REGEXP_INSTR ('BCA MCA PGDCA BBA MBA BCA', 'BCA', 1, 2, 0) AS BCA_index_2;  //1=pos at which the search will starts,2=occurrence of a match,0=to specify which type of position of the matched substring will return i.e; 0=eturns the position of the matched substring's first character & 1=return the position following the matched substring
+7)REGEXP_INSTR() Function returns the index value of the substring by matching the given string. This function returns 0 if no match is found Else, it returns 1.
+	SELECT REGEXP_INSTR ('BCA MCA PGDCA BBA MBA BCA', 'BCA', 1, 2, 0) AS BCA_index_2;  //1=pos at which the search will starts, 2=occurrence of a match, 0=to specify which type of position of the matched substring will return i.e; 0=returns the position of the matched substring's first character & 1=return the position following the matched substring
 

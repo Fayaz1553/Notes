@@ -1,3 +1,4 @@
+============Hibernate============
 Hibernate is a Java framework used to map Java objects to database tables for simplifying database operations. 
 It is an open-source, non-invasive, lightweight java ORM(Object-relational mapping) framework that is used to develop persistence logic that is independent of Database software. With features like automatic transaction management and caching, Hibernate simplifies and optimizes database interactions, making it an indispensable framework for efficient data management in Java applications. Hibernate supports almost all the major RDBMS.
 
@@ -32,10 +33,8 @@ Hibernate Anotations (hibernate.cfg.xml /hibernate.properties ----> config file)
 @Id //primary key
 @GeneratedValue(strategy = GenerationType.IDENTITY)  //to autoIncrement
 @Column(name="name of column in DB") //if name is not specified, it will take variable name
-
 @Inheritance -> This annotation defines the inheritance strategy to be used for an entity class hierarchy. It is specified on the entity class that is the root of the entity class hierarchy(that means; remaining enitity classes will get the fields of first entity class for which @Inheritance is used).
 If this annotation is not specified or if no inheritance is specified for an entity class hierarchy, the SINGLE_TABLE mapping strategy is used.
-
 @Transient -> Tells the hibernate, not to add this particular column
 @Transactional //instead of beginTransaction(); getTransaction().commit();
 	       //use it in servive lyr, if theres no service lyr, impl it in dao lyr

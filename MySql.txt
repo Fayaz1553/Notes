@@ -1,4 +1,4 @@
-======== MySQL ========
+==========MySQL==========
 SQL is a query language which is used to access, update, and manipulate the data stored in a database.
 MySQL is a relational database that uses SQL to query a database. MySQL stores the existing data in a database in an organized manner.
 
@@ -144,30 +144,38 @@ Note : job column is present in select query but not in the group by query. If i
 Contol Statements
 ------------------
 SELECT IF(200>350,'YES','NO'); //IF function 
- 
 SELECT lastname, IF(age>20,"Mature","Immature") As Result FROM student;  
-
 SELECT IFNULL(NULL,5); //If the first expression is not NULL, it will return the first expression. Otherwise, it will return the second expression
-
 SELECT NULLIF("Hello", "404");  //if the first expression is equal to the second expression, it returns the NULL. Otherwise, it returns the first expression.
 
-PROCEDURE: Stored Procedure is a function consists of many SQL statement to access the database system. Several SQL statements are consolidated into a stored procedure and execute them whenever and wherever required.
+Stored Procedure
+----------------
+A stored procedure is a program that performs a set of actions repeatedly. Several SQL statements are consolidated into a stored procedure(single unit) and execute them whenever and wherever required.
 
-DELIMITER $$   //IF statement(IF else, if then else if else etc)
-CREATE PROCEDURE myResult(IN original_rate NUMERIC(6,2),OUT discount_rate NUMERIC(6,2))    
-      BEGIN  
-         IF (original_rate>200) THEN  
-            SET discount_rate=original_rate*0.5;  
-        ELSE  
-            SET discount_rate=original_rate;  
-         END IF;  
-         select discount_rate;  
-     END$$  
-DELIMITER ;  
+delimiter $$    //since our stored procedure contains multiple statement separated with ";"
+	            we need to tell the MySQL shell not to try to execute the statement when
+	             it encounters a ";" like it normally would. Instead, it should wait for "$$" (we can give any delimitter ex; //, $$ etc)
+CREATE PROCEDURE myResult(IN original_rate NUMERIC(6,2), OUT discount_rate NUMERIC(6,2))    
+    BEGIN  
+        IF (original_rate>200) THEN  
+           SET discount_rate=original_rate*0.5;  
+       ELSE  
+           SET discount_rate=original_rate;  
+        END IF;  
+        select discount_rate;  
+   END;
+$$  
+delimiter ;   //now that we're done defining our procedure, change the delimiter back to ";" 
 
 //CALL statement to call a stored procedure. 
 CALL procedure_name( parameter(s))  
 
+Stored procedure vs Function
+1) Functions can only have input parameters, whereas procedures can have either input or output parameters.
+2) A function has a return type and returns a value, whereas A procedure does not have a return type But it returns values using the OUT parameters.
+3) Functions can be called from procedures, but procedures cannot be called from functions. 
+4) Exceptions can be handled in try-catch blocks within procedures, but try-catch blocks cannot be used within functions. 
+5) Procedures cannot be used in SELECT statements, but functions can be embedded in SELECT statements
 
 Operators
 ---------
@@ -263,6 +271,16 @@ Normalization is the process to eliminate data redundancy and enhance data integ
 //partially dependent -> if a Candidate-key is a combination of 2 or more columns, then every non-key column should be fully dependent on all Candidate-key columns.
 
 
+Indexing
+--------
+Indexing offers an efficient way to quickly access the records from the database files stored on the disk drive. It optimizes the database querying speed by serving as an organized lookup table with pointers to the location of the requested data. Indexing improves database performance by minimizing the number of disc visits required to fulfill a query.
+
+Index Architectures:
+Indexes typically use a balanced-tree (i.e., B-tree) structure to store the data in a sorted manner. Usage of B-tree also enhances the speed of data search and access operations in a database. The data structure associated with the index has two fields. The first field stores the values of the database column the index is sorting. The other field stores a group of pointers helping to identify the disk location of the column values.
+
+Three methods of indexing -> Clustered Indexing, Primary Indexing, Non-clustered or Secondary Indexing
+
+
 Imp Concepts
 -------------
 1)UNION operator allows us to combine two or more results from multiple SELECT queries into a single result set. It has a default feature to remove the duplicate rows from the tables
@@ -294,4 +312,16 @@ Imp Concepts
 
 7)REGEXP_INSTR() Function returns the index value of the substring by matching the given string. This function returns 0 if no match is found Else, it returns 1.
 	SELECT REGEXP_INSTR ('BCA MCA PGDCA BBA MBA BCA', 'BCA', 1, 2, 0) AS BCA_index_2;  //1=pos at which the search will starts, 2=occurrence of a match, 0=to specify which type of position of the matched substring will return i.e; 0=returns the position of the matched substring's first character & 1=return the position following the matched substring
+
+8)Back up MySQL Database Using mysqldump
+syntax -> mysqldump -u [username] -p [database_name] > [backup_file_name].sql  (When prompted, enter your password and press Enter to confirm)
+
+If you want to take a full backup i.e., all databases, procedures, routines, and events without interrupting any connections:
+	mysqldump -u [username] -p -A -R -E --triggers --single-transaction > [backup_file_name].sql
+	-A For all databases (you can also use --all-databases)
+	-R For all routines (stored procedures & triggers)
+	-E For all events
+	--single-transaction Without locking the tables i.e., without interrupting any connection (R/W).
+If you want to take a backup of only specified database(s):
+	mysqldump -u [username] -p [database_name] [other_database_name] -R -e --triggers --single-transaction > database_backup.sql
 

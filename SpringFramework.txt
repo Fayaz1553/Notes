@@ -136,6 +136,7 @@ Modes of Autowiring
 
 
 
+
 ===============SPRING BOOT================
 Spring Boot is an open-source Java framework that makes developing web applications and microservices faster and easier. It is a combination of Spring Framework and Embedded Servers. The main goal of Spring Boot is to reduce development, unit test, and integration test time. The spring boot follows a layered architecture in which each layer communicates to other layers. With Spring Boot, you can concentrate on business aspects rather than infrastructure.
 Spring Boot Advantages;
@@ -182,11 +183,29 @@ Path parameters form part of the request URL, and are referenced using placehold
 	•  syntax:  /customer/:id
 
 
-Dependencies
-------------
-spring-boot-starter-web //contains spring-web,web-mvc,rest,hibernate,tomcat etc
+Springboot - starters
+---------------------
+spring-boot-starter -> It is used for core starter, including auto-configuration support, logging, and YAML.
+spring-boot-starter-web	-> Starter for building web, including RESTful, applications using Spring MVC. Uses Tomcat as the default embedded container.
+spring-boot-starter-data-rest -> It is used for exposing Spring Data repositories over REST using Spring Data REST.
+spring-boot-starter-actuator -> It is used for Spring Boot's Actuator that provides production-ready features to help you monitor and manage your application. (The default endpoint is ‘localhost:8080/actuator’. Also /health & /info are available by default prefixed by /acutator)
+spring-boot-starter-test -> It is used to test Spring Boot applications with libraries, including JUnit, Hamcrest, and Mockito.
+spring-boot-starter-jdbc -> It is used for JDBC with the Tomcat JDBC connection pool.
+spring-boot-starter-validation -> It is used for Java Bean Validation with Hibernate Validator.
+spring-boot-starter-jersey -> It is used to build RESTful web applications using JAX-RS and Jersey. An alternative to spring-boot-starter-web.
+spring-boot-starter-aop -> It is used for aspect-oriented programming with Spring AOP and AspectJ.
+spring-boot-starter-amqp -> It is used for Spring AMQP and Rabbit MQ.
+spring-boot-starter-security -> It is used for Spring Security.
+spring-boot-starter-data-jpa -> It is used for Spring Data JPA with Hibernate.
+spring-boot-starter-cache -> It is used for Spring Framework's caching support.
+spring-boot-starter-cloud-connectors -> It is used for Spring Cloud Connectors that simplifies connecting to services in cloud platforms like Cloud Foundry and Heroku.
+spring-boot-starter-jetty -> It is used for Jetty as the embedded servlet container. An alternative to spring-boot-starter-tomcat.
+spring-boot-starter-logging -> It is used for logging using Logback. Default logging starter.
+spring-boot-starter-tomcat -> It is used for Tomcat as the embedded servlet container. Default servlet container starter used by spring-boot-starter-web.
+spring-boot-starter-log4j2 -> It is used for Log4j2 for logging. An alternative to spring-boot-starter-logging.
+
+
 spring-boot-devtools //used to automatically reload our appllication whenever code is updated
-spring-boot-starter-acutator //used to monitor & manage our application, check app's health,access metrics(The default endpoint is ‘localhost:8080/actuator’. By deafult /health & /info are available prefixed by /acutator, To add/include all ID/endpoints for your application you can do it in application.properties by following – management.endpoints.web.exposure.include=*)
 h2 // it is an open-source lightweight Java database.
 Lombok dependency  //it is used to reduce boilerplate code for model/data objects. like @Data annotation is a shortcut annotation and bundles @ToString, @Getter, @Setter, @EqualsAndHashCode and @RequiredArgsConstructor annotations into a single annotation to reduce boilerplate code. @NoArgsConstructor annotation is used to generate a constructor with no arguments. @AllArgsConstructor annotation is used to generate a parameterized constructor which accepts a single parameter for each field and initializes them using it.
 
@@ -297,9 +316,8 @@ The HEAD method does not return any responce body, while the GET method returns 
 Secure methods in springboot:
 ----------------------------
 Spring Boot Starter Security does not activate method-level authorization by default.
-You can activate it in your application by annotating any @Configuration class with @EnableMethodSecurity or adding <method-security> to any XML configuration file
-@EnableMethodSecurity
-Then, you are immediately able to annotate any Spring-managed class or method with @PreAuthorize, @PostAuthorize, @PreFilter, and @PostFilter to authorize method invocations, including the input parameters and return values.
+You can activate it in your application by annotating any @Configuration class with @EnableMethodSecurity or adding <method-security> to any XML configuration file.
+@EnableMethodSecurity -> Then, you are immediately able to annotate any Spring-managed class or method with @PreAuthorize, @PostAuthorize, @PreFilter, and @PostFilter to authorize method invocations, including the input parameters and return values.
 
 1. Securing Methods with `@PreAuthorize` and `@PostAuthorize`
 Spring Security provides annotations that enable you to secure methods with `@PreAuthorize` and `@PostAuthorize`, allow you to specify access control rules that determine if a method can be invoked or if its results can be returned.
@@ -331,6 +349,68 @@ public class OrderService {	//the `viewOrder` method is only accessible if the c
     }
 }
 
+
+service discovery in springboot (Eureka)
+----------------------------------------
+Service discovery in microservices is the process of dynamically locating and identifying available services within a distributed system.
+In a microservices environment, services are often deployed across multiple instances or containers, making it challenging for clients to locate and communicate with the appropriate service instances.
+Service discovery solves this problem by providing mechanisms for service registration, discovery.
+1. Service Registration
+When a service instance is started or deployed, it registers itself with a service registry. This registration process includes providing metadata such as the service name, IP address, port number, and health status.
+2. Service Discovery
+Clients looking to interact with a particular service do not need to have prior knowledge of the service’s location. Instead, they query the service registry to dynamically discover the available instances of the desired service.
+
+spring-cloud-starter-netflix-eureka-server -> dependency
+@EnableEurekaServer -> add in main class of springBoot app
+
+#application.properties
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka/
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+
+
+server side LB vs client side LB
+--------------------------------
+1) If you are keeping the load balancer on the server side and giving the load balancing responsibility to the server, then it’s called Server-Side Load Balancing.
+   If you are keeping the load balancer on the client side and giving the load balancing responsibility to the client, then it’s called Client-Side Load Balancing.	
+2) The main disadvantage of Server-Side Load Balancing is the single point of failure.
+   No more single point of failure in Client Side Load Balancer.	
+3) Network latency rises in Server-Side Load Balancing.
+   Less network latency as the client can directly call the backend servers.	
+4) The cost is high to implement Server-Side Load Balancing in comparison to Client-Side Load Balancing.
+   Cost Reduction as there is no need for server-side load balancing.	
+
+
+resilience4j package
+--------------------
+It helps with implementing resilient systems by managing fault tolerance for remote communications.
+
+1) Circuit Breaker pattern helps us in preventing a cascade of failures when a remote service is down. After a number of failed attempts, we can consider that the service is unavailable/overloaded and eagerly reject all subsequent requests to
+A CircuitBreaker can be in one of the three states:
+	CLOSED – everything is fine, no short-circuiting involved
+	OPEN – remote server is down, all requests to it are short-circuited
+	HALF_OPEN – a configured amount of time since entering OPEN state has elapsed and CircuitBreaker allows requests to check if the remote service is back online
+@CircuitBreaker(name = "companyBreaker", fallbackMethod = "companyBreakerFallback") -> add to respective method in service layer
+		companyBreaker -> name i.e configured in app.prop
+		companyBreakerFallback -> method to impl fallout responsea
+
+2) Retry pattern hepls us to automatically retry a failed call using the Retry API.
+@Retry(name = "companyBreaker",
+            fallbackMethod = "companyBreakerFallback")
+
+3) Rate Limiter pattern allows limiting access to some service i.e, accepts only specific no. of requests to a particular service in given time.
+@RateLimiter(name = "companyBreaker",
+            fallbackMethod = "companyBreakerFallback")
+
+
+zipkin
+------
+Spring Cloud Sleuth is a distributed tracing solution for Spring Cloud. It helps understand the latency issues in the microservice architecture by adding tracing information to the logs. While Sleuth helps to generate trace information, visualizing and storing it is a job for a tool like Zipkin.
+
+Zipkin is a distributed tracing system. It helps gather timing data needed to troubleshoot latency problems in service architectures. Features include both the collection and lookup of this data. 
+If you have a trace ID in a log file, you can jump directly to it. Otherwise, you can query based on attributes such as service, operation name, tags and duration. Some data will be summarized for you, such as the percentage of time spent in a service, and whether or not operations failed.
+
+management.tracing.sampling.probability=1.0	-> in app.prop
 
 
 

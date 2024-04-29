@@ -23,8 +23,17 @@ Dialect is a class that acts as a bridge between Java JDBC types and SQL types. 
 	- hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect  //DB specific dielect we need to use
 
 
-Native SQL queries are useful when you need to perform complex queries that cannot be expressed using Hibernate’s Query Language (HQL). To execute a native SQL query in Hibernate, you need to create an SQLQuery object and set the SQL statement to be executed.
-
+Native SQL queries are useful when you need to perform complex queries that cannot be expressed using Hibernate’s Query Language (HQL).
+In Hibernate, you can execute native SQL queries using the createNativeQuery() method provided by the Session interface or EntityManager interface (if you're using JPA with Hibernate as the persistence provider). 
+Here's how you can execute native SQL queries in Hibernate:
+1) Using Session (Hibernate-specific):
+	Session session = sessionFactory.openSession();
+	List<Object[]> results = session.createNativeQuery("SELECT * FROM my_table").list();
+	session.close();
+2) Parameterized Queries:
+	Query query = session.createNativeQuery("SELECT * FROM my_table WHERE column = :value");
+	query.setParameter("value", value);
+	List<Object[]> results = query.list();
 
 Hibernate Anotations (hibernate.cfg.xml /hibernate.properties ----> config file)
 --------------------

@@ -5,15 +5,15 @@ MySQL is a relational database that uses SQL to query a database. MySQL stores t
 Different Types of Database Keys;
 Candidate Key - A set of one or more columns that can uniquely identify a record in a table are known as candidate keys, and you can use each candidate key as a Primary Key.
 Primary Key - It is the first key used to uniquely identify a record in table
-Super Key -  A super key is a group of single or multiple keys that identifies rows in a table.
+Super Key -  A super key is a set of single or multiple keys whose combined values can uniquely identifies rows in a table.Any candidate key is a super key, but not all super keys are candidate keys.
 Alternate Key - A candidate key other than the primary key is called an alternate key. (also called as secondary key)
-Foreign Key - Foreign keys are the column of the table used to point to the primary key of another table.
+Foreign Key - Foreign keys are the column of the table used to point to the primary key of another table. It must not contain NULL values 
 Composite Key - It acts as a primary key if there is no primary key in a table. Two or more columns are used together to make a composite key.
 
 Constraint can be used to specify the limit on the data type of table. These can be specified while creating or altering the table statement.
 NOT NULL
-CHECK
-DEFAULT
+CHECK //It is a rule that limits the values that can be placed in a column. age INT CHECK (age >= 18)
+DEFAULT  //middle_name VARCHAR(50) DEFAULT 'Unknown'
 UNIQUE
 PRIMARY KEY
 FOREIGN KEY
@@ -50,8 +50,10 @@ USE database_name;
 DROP SCHEMA/DATABASE IF EXISTS database_name;   
 
 
-Maintain TABLES(DDL)- cannot undone implicitly saved
---------------------
+Data Definition Language (DDL):- cannot undone implicitly saved
+------------------------------
+DDL commands are used to define, modify, and manage the structure of database objects such as tables, indexes, and views.
+
 CREATE TABLE employee_table(  
     id int NOT NULL AUTO_INCREMENT,  
     name varchar(45) NOT NULL,  
@@ -67,108 +69,175 @@ CREATE TABLE Orders (
     FOREIGN KEY (ID) REFERENCES employee_table(id)  
 );  
 
+CREATE TABLE IF NOT EXISTS duplicate_table_name   //copy other tables data
+SELECT * FROM original_table; 
+
 SHOW TABLES;
 SHOW TABLES FROM database_name;  //from another db also
 
-DESC tablename;
+DESC table_name;
 
-DROP TABLE  table_name;  //Drop removes both data & structure of table
+DROP TABLE table_name;  //Drop removes both data & structure of table
 
-TRUNCATE TABLE customer;  //removes the complete data without removing its structure. It is a part of DDL/data definition language command. 
+TRUNCATE TABLE table_name;  //removes the complete data without removing its structure. It is a part of DDL/data definition language command. 
 
-ALTER TABLE cus_tbl  
+ALTER TABLE table_name 
 ADD cus_age varchar(40) NOT NULL;  //add new columns
 
-ALTER TABLE cus_tbl  
+ALTER TABLE table_name  
 ADD cus_address varchar(100) NOT NULL AFTER cus_surname,  	// It tells MySQL where to create the column in the table
 ADD cus_salary int(100) NOT NULL AFTER cus_age ;  
 
-ALTER TABLE cus_tbl  
+ALTER TABLE table_name  
 MODIFY cus_surname varchar(50) NULL;   //MODIFY the datatype of existing column in the table
-
+--or---
 ALTER TABLE table_name
-ALTER COLUMN column_name TYPE new_data_type; //in postgress(correct )
+ALTER COLUMN column_name TYPE varchar(50) NOT NULL; //in postgress
 
 ALTER TABLE table_name  
 DROP COLUMN column_name;  
 
-ALTER TABLE cus_tbl  
+ALTER TABLE table_name  
 CHANGE COLUMN cus_surname cus_title varchar(20) NOT NULL;   //rename column
 ---- or ----
 ALTER TABLE table_name   
 RENAME COLUMN old_column_name TO new_column_name; 
 
-ALTER TABLE cus_tbl RENAME TO cus_table;  //rename table 
+ALTER TABLE table_name RENAME TO cus_table;  //rename table 
 --- or ---
-RENAME old_table TO new_table;
-
-CREATE TABLE IF NOT EXISTS duplicate_table   //copy other tables data
-SELECT * FROM original_table;  
+RENAME old_table TO new_table; 
 
 
-Modify Queries(DML) - can be undone
--------------------
-SELECT * FROM People;  
+Data Manipulation Language (DML):- can be undone
+--------------------------------
+DML commands are used to manipulate data stored in database objects.
 
-INSERT INTO People (id, name, occupation, age) VALUES (101, 'Peter', 'Engineer', 32);  
+SELECT * FROM table_name;  
+
+INSERT INTO table_name (id, name, occupation, age) VALUES (101, 'Peter', 'Engineer', 32);  
 ---- or ----
-INSERT INTO People VALUES  	//  to insert multiple values at a time
+INSERT INTO table_name VALUES  	//  to insert multiple values at a time
 (102, 'Joseph', 'Developer', 30),  
 (103, 'Mike', 'Leader', 28),  
-(104, 'Stephen', 'Scientist', 45);  
+(104, 'Stephen', 'Scientist', 45); 
 
-REPLACE INTO Person (id, city)  //If the duplicate record found, the replace command will delete the existing row and then adds the new record in the table, otherwise acts as a standard INSERT statement is performed.
+REPLACE INTO table_name (id, city) VALUES (101, 'India'); //If the duplicate record found, the replace command will delete the existing row and then adds the new record in the table, otherwise acts as a standard INSERT statement is performed.
 
 INSERT INTO table_name2 SELECT * FROM table_name1 WHERE condition;   //to copy all data from one table into another table
 
-UPDATE trainer SET email = 'mike@tutorialandexamples.com' WHERE course_name = 'Java';  
+UPDATE table_name SET email = 'mike@tutorialandexamples.com' WHERE course_name = 'Java';  
 
-DELETE FROM Employees WHERE emp_id=107;  
+DELETE FROM table_name WHERE emp_id=107;  
+
+
+Data Control Language (DCL):
+----------------------------
+DCL commands are used to control access to the database.
+
+GRANT: Provides specific privileges to database users.
+REVOKE: Removes previously granted privileges from users.
+
+Transaction Control Language (TCL):
+----------------------------------
+TCL commands are used to manage transactions within a database.
+
+COMMIT: Saves changes made during the current transaction.
+ROLLBACK: Undoes changes made during the current transaction.
+SAVEPOINT: Sets a point within a transaction to which you can later roll back.
 
 
 CLAUSES:  //Used to limit the resultSet by providing conditions to the query.
 -------
-FROM
+FROM  //to specify the table or tables from which you want to retrieve data 
 DISTINCT  //only unique values
 WHERE  //used to filter the Non-grouped data.
 GROUP BY  //It groups the duplicate data into one
-HAVING  //used to filter the grouped data,should be used after group by.
+HAVING  //used to filter the grouped data, should be used after group by.
 ORDER BY  //It arranges the data either in ascending or descending order.It should be used always as the last statement in the SQL query
 
 Note : job column is present in select query but not in the group by query. If it is enclosed in any of the group functions like sum(sal) etc – then it is not an error. But whatever column is included in the select query must also be included in the group by query.
 	SELECT emp_name, job, MAX(salary) AS "Sal"  
 	FROM employees  				
-	GROUP BY emp_name; //needs to verify 
+	GROUP BY emp_name; //to fix add job column to GROUP BY clause or perform aggrigation on job like MAX(job) AS job
 
 
 Contol Statements
 ------------------
 SELECT IF(200>350,'YES','NO'); //IF function 
-SELECT lastname, IF(age>20,"Mature","Immature") As Result FROM student;  
-SELECT IFNULL(NULL,5); //If the first expression is not NULL, it will return the first expression. Otherwise, it will return the second expression
-SELECT NULLIF("Hello", "404");  //if the first expression is equal to the second expression, it returns the NULL. Otherwise, it returns the first expression.
+SELECT lastname, IF(age>20,"Mature","Immature") As Result FROM student;  //this is MySQL-specific. In standard SQL, the IF function is not used. Instead, we use a CASE expression for conditional logic. 
+SELECT IFNULL(NULL,5); //If the first expression is not NULL, it will return the 1st expression. Otherwise, it will return the 2nd expression
+SELECT NULLIF("Hello", "404");  //if the 1st expression is equal to the 2nd expression, it returns the NULL. Otherwise, it returns the 1st expression.
 
-Stored Procedure
-----------------
+Stored Procedure:
+-----------------
 A stored procedure is a program that performs a set of actions repeatedly. Several SQL statements are consolidated into a stored procedure(single unit) and execute them whenever and wherever required.
 
 delimiter $$    //since our stored procedure contains multiple statement separated with ";"
-	            we need to tell the MySQL shell not to try to execute the statement when
-	             it encounters a ";" like it normally would. Instead, it should wait for "$$" (we can give any delimitter ex; //, $$ etc)
+	            we need to tell the MySQL shell donot try to execute the statement when it encounters a ";" like it normally would. 
+			Instead, it should wait for "$$" (we can give any delimitter ex; //, $$ etc)
 CREATE PROCEDURE myResult(IN original_rate NUMERIC(6,2), OUT discount_rate NUMERIC(6,2))    
-    BEGIN  
-        IF (original_rate>200) THEN  
-           SET discount_rate=original_rate*0.5;  
-       ELSE  
-           SET discount_rate=original_rate;  
-        END IF;  
-        select discount_rate;  
-   END;
-$$  
+BEGIN  
+    IF (original_rate>200) THEN  
+       SET discount_rate=original_rate*0.5;  
+    ELSE  
+       SET discount_rate=original_rate;  
+    END IF;  
+      select discount_rate;  
+END $$  
 delimiter ;   //now that we're done defining our procedure, change the delimiter back to ";" 
 
-//CALL statement to call a stored procedure. 
-CALL procedure_name( parameter(s))  
+CALL procedure_name(x, y);  //CALL statement to call a stored procedure. 
+
+
+DELIMITER //
+CREATE PROCEDURE GetEmployeeName (IN emp_id INT)
+BEGIN
+    DECLARE emp_name VARCHAR(100);
+    SELECT employee_name INTO emp_name 
+	FROM employees WHERE employee_id = emp_id;  //Retrieves the employee_name corresponding to the input emp_id and assigns it to the variable emp_name.
+    SELECT emp_name AS employee_name;  //Returns the employee_name as the result
+END //
+DELIMITER ;
+
+CALL GetEmployeeName(123);
+
+Functions:
+----------
+Functions  enable users to perform operations on data, manipulate strings, perform calculations, work with dates and times, and more. functions are named, reusable SQL queries that take zero or more parameters as input and return a single value. They are used to encapsulate logic that can be reused throughout queries within a database. 
+--- String Functions
+CONCAT(): Concatenates two or more strings.
+SUBSTRING(): Returns a substring from a string.
+UPPER(): Converts a string to uppercase.
+LOWER(): Converts a string to lowercase.
+LENGTH(): Returns the length of a string.
+TRIM(): Removes leading and trailing spaces from a string.
+REPLACE(): Replaces occurrences of a specified string.
+LEFT(), RIGHT(): Returns the leftmost or rightmost characters of a string.
+--- Numeric Functions
+ABS(): Returns the absolute value of a number.
+ROUND(): Rounds a number to a specified number of decimal places.
+CEILING(), FLOOR(): Returns the smallest integer greater than or equal to, or the largest integer less than or equal to, a given number.
+RAND(): Returns a random number.
+MOD(): Returns the remainder of a division operation.
+--- Date and Time Functions
+NOW(): Returns the current date and time.
+CURDATE(): Returns the current date.
+CURTIME(): Returns the current time.
+DATE_FORMAT(): Formats a date as specified.
+DATEDIFF(): Calculates the difference between two dates.
+DATE_ADD(), DATE_SUB(): Adds or subtracts a specified time interval from a date.
+--- Aggregate Functions
+SUM(): Calculates the sum of values.
+AVG(): Calculates the average of values.
+COUNT(): Counts the number of rows.
+MAX(), MIN(): Returns the maximum or minimum value.
+GROUP_CONCAT(): concatenates values from multiple rows into a single string.
+--- Control Flow Functions
+IF(), CASE: Conditional functions used to control the flow of execution based on conditions.
+--- Miscellaneous Functions
+NULLIF(): Returns NULL if two expressions are equal.
+COALESCE(): Returns the first non-NULL value in a list of expressions.
+IFNULL(): Returns a specified value if the expression is NULL.
 
 Stored procedure vs Function
 1) Functions can only have input parameters, whereas procedures can have either input or output parameters.
@@ -177,7 +246,7 @@ Stored procedure vs Function
 4) Exceptions can be handled in try-catch blocks within procedures, but try-catch blocks cannot be used within functions. 
 5) Procedures cannot be used in SELECT statements, but functions can be embedded in SELECT statements
 
-Operators
+Operators:
 ---------
 // AND/OR --> AND - both conditions to be true, OR - any one condition has to be true
 SELECT * FROM cus_tbl WHERE cus_firstname = 'Abijeet' AND/OR cus_id > 3;  
@@ -201,33 +270,19 @@ SELECT * FROM officers WHERE commision IS NULL;
 SELECT * FROM officers WHERE officer_name IS NOT NULL;  
 
 
-Aggregate Functions
---------------------
-count()
-sum()
-avg()
-min()
-max()
-
-//GROUP_CONCAT() - returns the concatenated string from multiple rows into a single string
-SELECT emp_id, emp_fname, emp_lname, dept_id,     
-GROUP_CONCAT(designation) as "designation" FROM employee group by emp_id;
-
-first() & last()  //we must have to use the LIMIT clause. It is because FIRST() & LAST() function only supports in MS Access.
-
-
 JOINS:  Joins are used when we need to fetch the data from multiple tables based on the relationship between the fields of the tables
 ------
-1) CROSS JOIN is used to combine all possibilities of the two or more tables and returns the result that contains every row from all contributing tables. The CROSS JOIN is also known as CARTESIAN JOIN
+1) CROSS JOIN is also known as CARTESIAN JOIN, produces a Cartesian product of two tables. It combines each row from the first table with every row from the second table, resulting in a result set that is the product of the two tables.
 SELECT customer.customer_id, customer.cust_name, orders.order_id, orders.price  
 FROM 
 customer CROSS JOIN orders; 
+
+//If table1 has 3 rows and table2 has 4 rows, a cross join between them will produce 12 rows (3 * 4 = 12)
 ----->In the absence of a WHERE condition the CARTESIAN JOIN will behave like a CARTESIAN PRODUCT . i.e., the number of rows in the result-set is the product of the number of rows of the two tables.
-In the presence of WHERE condition this JOIN will function like a INNER JOIN.
-Generally speaking, Cross join is similar to an inner join where the join-condition will always evaluate to True 
+In the presence of WHERE condition this JOIN will function like a INNER JOIN. Generally speaking, Cross join is similar to an inner join where the join-condition will always evaluate to True 
 
 2) INNER JOIN selects all rows from both the tables as long as the condition satisfies.
-SELECT students.stud_fname, students.stud_lname, students.city, technologies.technology    
+SELECT students.stud_fname, students.city, technologies.technology    
 FROM 
 students INNER JOIN technologies ON students.student_id = technologies.tech_id;  //INNER JOIN or JOIN or EQUI-JOIN
 
@@ -236,19 +291,21 @@ SELECT customers.customer_id, customers.cust_name, customers.occupation, orders.
 FROM 
 customers LEFT JOIN orders ON customers.customer_id = orders.customer_id;  //LEFT OUTER JOIN
 
---->   the table customers and orders have the same column name, which is customer_id. In that case, we can also be used with the USING clause to access the records.  
-4) Right Join is used to joins two or more tables and returns all rows from the right-hand table, and only those results from the other table that fulfilled the join condition.
+---> the table customers and orders have the same column name, which is customer_id. In that case, it can also be used with the USING clause to access the records. 
+So, instead of table1.column_name = table2.column_name, you can use the USING(column_name) clause.
+4) Right Join returns all rows from the right-hand table, and only those results from the left table that fulfilled the join condition.
 SELECT customers.customer_id, Customers.cust_name, orders.price, orders.date  
 FROM 
 customers RIGHT JOIN orders USING(customer_id) //RIGHT OUTER JOIN
 ORDER BY  customer_id; 
 
-5) FULL OUTER JOIN contains all rows from both tables, but not like cross join
+5) FULL OUTER JOIN contains all rows from both tables, but not like cross join. If a row from one table doesn't have a matching row in the other table, NULL values are used for the columns from the missing row.
 SELECT customers.customer_id, Customers.cust_name, orders.price, orders.date  
 FROM 
-customers FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;  //OUTER JOIN
+customers FULL OUTER JOIN orders ON customers.customer_id = orders.customer_id;  //OUTER JOIN or FULL JOIN
+//If table1 has 5 rows and table2 has 4 rows, a full join between them will produce at least 5 rows in the result set, including all rows from both tables, and NULL values for columns from the table with missing rows.
 
-6) SELF JOIN is a join that is used to join with itself. Self Join uses table aliases, This is used to compare values in a column with other values in the same column in the same table
+6) SELF JOIN is a join where a table is joined with itself. Self Join uses table aliases, This is used to compare values in a column with other values in the same column in the same table
 SELECT a.ROLL_NO , b.NAME
 FROM Student a, Student b	//No join command inbetween
 WHERE a.ROLL_NO < b.ROLL_NO; 
@@ -271,15 +328,16 @@ Normalization is the process to eliminate data redundancy and enhance data integ
 //partially dependent -> if a Candidate-key is a combination of 2 or more columns, then every non-key column should be fully dependent on all Candidate-key columns.
 
 
-Indexing
+Indexing - improves DB performance
 --------
 Indexing offers an efficient way to quickly access the records from the database files stored on the disk drive. It optimizes the database querying speed by serving as an organized lookup table with pointers to the location of the requested data. Indexing improves database performance by minimizing the number of disc visits required to fulfill a query.
 
 Index Architectures:
 Indexes typically use a balanced-tree (i.e., B-tree) structure to store the data in a sorted manner. Usage of B-tree also enhances the speed of data search and access operations in a database. The data structure associated with the index has two fields. The first field stores the values of the database column the index is sorting. The other field stores a group of pointers helping to identify the disk location of the column values.
 
-Three methods of indexing -> Clustered Indexing, Primary Indexing, Non-clustered or Secondary Indexing
-
+Three methods of indexing -> Clustered or Primary Indexing, Non-clustered or Secondary Indexing
+Ex: create INDEX index_name ON table_name (column_name);
+    create INDEX index_name ON table_name (column_name1, column_nmae2);
 
 Imp Concepts
 -------------
@@ -293,22 +351,30 @@ Imp Concepts
 2)The UNION ALL operator combines two or more results from multiple SELECT queries and returns all records into a single result set. It does not remove the duplicate rows from the output 
 
 3)Limit query is used to restrict the number of rows returns from the result set, rather than fetching the whole set in the MySQL database.
-	SELECT [column_list] FROM table_name  
-	LIMIT offset, limit-count;  
+SELECT [column_list] FROM table_name  
+LIMIT offset, rwo_count;  //offset=tells which line to begin with the data recovery(offset of row1 is '0'), rwo_count=no. of rows to be returned. 
 
 4)find Nth highest salary in a given table with & without using limit
-	SELECT DISTINCT salary FROM emp ORDER BY salary DESC LIMIT n-1, 1;  //using limit
+using LIMIT : 
+SELECT DISTINCT salary FROM employees ORDER BY salary DESC LIMIT n-1, 1;  
+
+using SUBQUERIES :
+SELECT salary FROM employee e1 WHERE N = (
+	   SELECT COUNT(DISTINCT salary) 
+           FROM employee e2 
+           WHERE e2.salary >= e1.salary);  //gives rank for each salary, and we will fetch req no.
 
 5)find the duplicate values in a table
-	SELECT name, email, COUNT(name)  
+	SELECT name, COUNT(name) AS duplicate_count
 	FROM student_contacts  
 	GROUP BY name  
 	HAVING COUNT(name) > 1; 
 
-6)Delete Duplicate Record Using Inner Join
-	DELETE S1 FROM student_contacts AS S1  
-	INNER JOIN student_contacts AS S2   
+6)Delete Duplicate Record from the table student_contacts based on the email column Using Inner Join
+	DELETE S1 FROM 
+	student_contacts AS S1 INNER JOIN student_contacts AS S2   
 	WHERE S1.id < S2.id AND S1.email = S2.email;  //use < to keep the lowest id in the table
+//only records with the same email but different IDs are selected for deletion. 
 
 7)REGEXP_INSTR() Function returns the index value of the substring by matching the given string. This function returns 0 if no match is found Else, it returns 1.
 	SELECT REGEXP_INSTR ('BCA MCA PGDCA BBA MBA BCA', 'BCA', 1, 2, 0) AS BCA_index_2;  //1=pos at which the search will starts, 2=occurrence of a match, 0=to specify which type of position of the matched substring will return i.e; 0=returns the position of the matched substring's first character & 1=return the position following the matched substring

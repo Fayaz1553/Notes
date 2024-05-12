@@ -89,6 +89,12 @@ Spring IoC vs Spring DI
 
  -> Bean life cycle is managed by the spring container. When we run the program then, first of all, the spring container gets started. After that, the container creates the instance of a bean as per the request, and then dependencies are injected. And finally, the bean is destroyed when the spring container is closed. Therefore, if we want to execute some code on the bean instantiation and just after closing the spring container, then we can write that code inside the custom init() method and the destroy() method.
 
+Bean life cycle:
+----------------
+Bean life cycle is managed by the spring container. the bean life cycle refers to when & how the bean is instantiated, what action it performs until it lives, and when & how it is destroyed.
+container started -> Bean instantiated -> Dependencies injected -> custom init() method -> custom utility methods -> custom destroy() method.
+if we want to execute some code on the bean instantiation and just after closing the spring container, then we can write that code inside the custom init() method and the destroy() method.	
+
 bean scopes
 -----------
 1) Singleton(default) ---> spring container creates only one instance of bean definition per Spring IoC container(shared among all beans of same type) 
@@ -146,7 +152,8 @@ Spring Boot Advantages;
 	It Provides ‘starter’ dependencies to simplify the build configuration.
 	It includes features that are ready for production such as metrics, health checks and externalised settings.
 
-Spring Initializer is a Web-based tool that generates the Spring Boot project structure.
+-> Spring Initializer is a Web-based tool that generates the Spring Boot project structure.
+-> To remove default embeded server in springBoot, excule the tomcat dependency from spring-boot-starter-web, and add required server dependency in pom.xml
 
 The spring boot consists of the following four layers:
 ------------------------------------------------------
@@ -248,8 +255,8 @@ Annotations
 @Qualifier vs @Primary
 ----------------------
 there may be scenarios where multiple beans of the same type exist, leading to ambiguity during autowiring. This is where the @Qualifier and @Primary annotations come to our rescue.
-@Qualifier -> used to resolve ambiguity by specifying which exact bean should be wired where there are multiple beans of the same type.
-@Primary -> used to specify which bean is given preference when multiple beans of the same type exist.
+@Primary -> used to specify which bean is given higher preference when multiple beans of the same type exist. But it does not allow you to select a specific bean.
+@Qualifier -> used to specify which exact bean should be wired where there are multiple beans of the same type. We can also use the @Qualifier with @Component/ @Bean to assign an extra name to the bean.
 
 @Component
 @Primary

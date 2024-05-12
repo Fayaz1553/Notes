@@ -217,3 +217,39 @@ for ( int i=0; i<100000; i++ ) {
 }
 tx.commit();
 session.close();
+
+
+SQL Injection:
+--------------
+SQL Injection (SQLi) is a web security vulnerability that allows an attacker to injection attack that makes it possible to execute malicious SQL statements. These statements control a database server behind a web application. Attackers can use SQL Injection vulnerabilities to bypass application security measures. This can allow an attacker to view data that they are not normally able to retrieve. This might include data that belongs to other users, or any other data that the application can access. They can also use SQL Injection to add, modify, and delete records in the database.
+String query = "SELECT account_balance FROM user_data WHERE user_name = "
+             + request.getParameter("customerName");  -> unvalidated "customerName" parameter is simply appended to the query, an attacker can enter SQL code into that query
+Best preactices to avoid SQL Injection:
+Stored procedures
+Use prepared statements
+	String query = "SELECT account_balance FROM user_data WHERE user_name = ? ";
+	PreparedStatement pstmt = connection.prepareStatement( query );
+	pstmt.setString( 1, custname);
+Input validation
+Firewall
+Limiting privileges - minimize the privileges assigned to every database account in your environment(read-only, write-only etc)
+Restrict database access
+Least privilege
+Vulnerability scanners
+Sanitizing inputs
+Updating your system
+Use an orm layer
+Use parameterized queries
+
+
+Dirty checking:
+---------------
+Dirty Checking is a mechanism used by Hibernate to determine whether any value of an entity has changed since it was retrieved from the database. This helps Hibernate optimize database queries so that only the fields that have changed are updated. Before committing a transaction or explicitly calling `flush()`, Hibernate performs a “dirty checking” process, comparing the current state of the entity with its initial state stored in the cache. If Hibernate detects any changes, it generates and executes the corresponding SQL update query to update only those fields.
+	Wrapping a method in @Transactional is the easiest way to ensure the operation of the Hibernate “dirty checking” mechanism. When a method is wrapped in @Transactional, any entities retrieved or saved within that method automatically become part of the Hibernate Session (or JPA EntityManager). Any changes made to managed entities within a transaction will be automatically tracked and synchronized with the database at the end of the transaction, thanks to the “dirty checking” mechanism.
+
+Advantages of “dirty checking”:
+- Optimization: Only modified fields are updated in the database, which can improve performance as less data is transferred between the application and the database.
+- Automation: Developers do not need to explicitly specify which fields have changed. Hibernate does this automatically.
+Disadvantages or limitations:
+- Overhead: The “dirty checking” mechanism may add additional overhead, especially when dealing with a large number of entities.
+

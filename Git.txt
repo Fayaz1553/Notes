@@ -213,3 +213,30 @@ ETC --->contains binary executable files req for system administration
 LIB --->it contains all the library functions provided by unix users
 UNIX--->has some predefined directories
 
+VIM: (Advanced VI editor)
+------------------------
+3 modes:
+	command mode - initally we are in this mode, but to move explicitly press ESC
+	Inser mode - when we press i/insert to edit text
+	Extended command mode - when we press : then follwed by q(quit), w(save), wq(save & quit), q!(quit forcefully)
+	
+All below cmds has to be done in command mode(ESC)
+	/   -> to search (n -> to move to the next selection)
+	gg  -> to go Beginning of page (first line)
+	G (shift+g) -> to go to End of page (last line)
+	yy  -> to copy a line
+	nyy -> to copy n number of lines from cursor, n=number ex: 2yy, 5yy
+	dd  -> to cut the line
+	p   -> to paste the line below cursor point
+	P (shift+p) -> to paste the line above cursor point
+	u   -> to undo last change (word)
+	x   -> to delete letter by letter
+	dw  -> to delete word by word in a line
+	dd  -> to delete entire line
+	ndd -> to delete n number of lines from cursor
+	
+sudo -i -> to move to the root user
+ls -l -> to list with more info
+mv file1.txt dir1 -> to move a file to given dir
+mv -r dir1 dir2 -> to move one dir to another
+touch file{1..5}.txt -> to create multiple files ex: given cmd creates 5 files with names file1.txt, file2.txt...file5.txt
